@@ -9,7 +9,7 @@ Triangle::Triangle()
 {
 	cout << "triangle construktor()" << endl;
 
-	glm::vec3 position(0.0f, 0.0f, 13.0f);
+	glm::vec3 position(2.0f, 5.0f, 18.0f);
 	camera = Camera(position);
 
 	mouse_first_in = true;
@@ -51,7 +51,7 @@ void Triangle::update()
 	// camera
 	camera.updateKey(delta_time, speed);
 	// mouse
-	if (InputHandler::Instance()->getMouseButtonState(RIGHT_PRESSED))
+	if (InputHandler::Instance()->getMouseButtonState(LEFT_PRESSED) )
 	{
 		SDL_ShowCursor(SDL_DISABLE);
 		mouse_position = InputHandler::Instance()->getMousePosition();
@@ -70,7 +70,7 @@ void Triangle::update()
 
 		camera.updateMouse(x_offset, y_offset);
 	}
-	if (InputHandler::Instance()->getMouseButtonState(RIGHT_RELEASED))
+	if (InputHandler::Instance()->getMouseButtonState(LEFT_RELEASED))
 	{
 		SDL_ShowCursor(SDL_ENABLE);
 		mouse_first_in = true;
@@ -79,6 +79,7 @@ void Triangle::update()
 	perspective_view = camera.getViewMatrix();
 	perspective_projection = glm::perspective(glm::radians(camera.fov), (float)Game::Instance()->screen_width / (float)Game::Instance()->screen_height, 1.0f, 2000.0f); // пирамида
 
+	our_model.update();
 }
 
 void Triangle::render()
@@ -99,7 +100,7 @@ void Triangle::render()
 	glUniform1f(glGetUniformLocation(programID_scene, "point_light.linear"), 0.007);	//0.14 0.09  0.07  0.045  0.027  0.022  0.014  0.007  0.0014 -	разное расстояние затухания
 	glUniform1f(glGetUniformLocation(programID_scene, "point_light.quadratic"), 0.0002);//0.07 0.032 0.017 0.0075 0.0028 0.0019 0.0007 0.0002 0.000007	расстояние -->
 
-	//matr_model = glm::translate(matr_model, glm::vec3(0.0f, -0.1f, 0.0f));
+	matr_model = glm::translate(matr_model, glm::vec3(0.0f, -0.05f, 0.0f));
 	//matr_model = glm::scale(matr_model, glm::vec3(0.1f, 0.1f, 0.1f));
 	matr_model = glm::rotate(matr_model, glm::radians(0.1f), glm::vec3(0.0f, 0.0f, 1.0f));
 
@@ -117,6 +118,13 @@ void Triangle::render()
 	glUniformMatrix4fv(glGetUniformLocation(programID_scene, "normals_matrix"), 1, GL_FALSE, glm::value_ptr(matr_normals_cube2));
 	our_model2.draw(programID_scene);
 
+}
+
+void Triangle::playSound()
+{
+	our_model.playSound();
+
+	our_model2.playSound();
 }
 
 GLuint Triangle::loadImageToTexture(const char* image_path)

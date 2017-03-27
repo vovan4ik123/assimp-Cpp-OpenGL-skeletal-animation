@@ -13,6 +13,7 @@ public:
 	void render();
 	void handleEvents();
 	void update();
+	void playSound();
 	void clean();
 
 	int screen_width;

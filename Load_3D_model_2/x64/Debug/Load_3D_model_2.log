@@ -1,0 +1,11 @@
+﻿  Model.cpp
+d:\programmy\opengl\load_3d_model_2\load_3d_model_2\model.cpp(126): warning C4018: '<': signed/unsigned mismatch
+d:\programmy\opengl\load_3d_model_2\load_3d_model_2\model.cpp(136): warning C4018: '<': signed/unsigned mismatch
+d:\programmy\opengl\load_3d_model_2\load_3d_model_2\model.cpp(152): warning C4018: '<': signed/unsigned mismatch
+d:\programmy\opengl\load_3d_model_2\load_3d_model_2\model.cpp(161): warning C4018: '<': signed/unsigned mismatch
+d:\programmy\opengl\load_3d_model_2\load_3d_model_2\model.cpp(174): warning C4018: '<': signed/unsigned mismatch
+d:\programmy\opengl\load_3d_model_2\load_3d_model_2\model.cpp(213): warning C4018: '<': signed/unsigned mismatch
+d:\programmy\opengl\load_3d_model_2\load_3d_model_2\model.cpp(290): warning C4018: '<': signed/unsigned mismatch
+d:\programmy\opengl\load_3d_model_2\load_3d_model_2\model.cpp(503): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  Load_3D_model_2.vcxproj -> D:\Programmy\OpenGL\Load_3D_model_2\x64\Debug\Load_3D_model_2.exe
+  Load_3D_model_2.vcxproj -> D:\Programmy\OpenGL\Load_3D_model_2\x64\Debug\Load_3D_model_2.pdb (Full PDB)

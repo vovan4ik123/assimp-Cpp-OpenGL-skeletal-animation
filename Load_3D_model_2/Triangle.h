@@ -41,6 +41,7 @@ public:
 	void init();
 	void update();
 	void render();
+	void playSound();
 
 	static GLuint loadDDS(const char* image_path, int* w = nullptr, int* h = nullptr);
 	static GLuint loadImageToTexture(const char* image_path);

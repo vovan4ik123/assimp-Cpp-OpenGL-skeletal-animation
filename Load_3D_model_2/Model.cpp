@@ -1,5 +1,6 @@
 #include "Model.h"
 #include "Triangle.h"
+#include "InputHandler.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -25,6 +26,40 @@ void Model::init(GLuint shader_program)
 		strcpy_s(name_char, name.c_str());
 		m_bone_location[i] = glGetUniformLocation(shader_program, name_char);
 	}
+
+	music = Mix_LoadMUS("music/modern_talking_jet_airliner.mp3");
+	Mix_VolumeMusic(16);
+	Mix_PlayMusic(music, 0); // -1 = NONSTOP playing
+
+	music2 = Mix_LoadMUS("music/02_modern_talking_you_can_win_if_you_want.mp3");
+
+	// rotate head AND AXIS(y_z) about x !!!!!  Not be gimbal lock
+	//rotate_head_xz *= glm::quat(cos(glm::radians(-45.0f / 2)), sin(glm::radians(-45.0f / 2)) * glm::vec3(1.0f, 0.0f, 0.0f));
+}
+
+void Model::update()
+{
+	// making new quaternions for rotate head
+	if (InputHandler::Instance()->isKeyDown(SDL_SCANCODE_1))
+	{
+		rotate_head_xz *= glm::quat(cos(glm::radians(1.0f / 2)), sin(glm::radians(1.0f / 2)) * glm::vec3(1.0f, 0.0f, 0.0f));
+	}
+
+	if (InputHandler::Instance()->isKeyDown(SDL_SCANCODE_2))
+	{
+		rotate_head_xz *= glm::quat(cos(glm::radians(-1.0f / 2)), sin(glm::radians(-1.0f / 2)) * glm::vec3(1.0f, 0.0f, 0.0f));
+	}
+
+	if (InputHandler::Instance()->isKeyDown(SDL_SCANCODE_3))
+	{
+		rotate_head_xz *= glm::quat(cos(glm::radians(1.0f / 2)), sin(glm::radians(1.0f / 2)) * glm::vec3(0.0f, 0.0f, 1.0f));
+	}
+
+	if (InputHandler::Instance()->isKeyDown(SDL_SCANCODE_4))
+	{
+		rotate_head_xz *= glm::quat(cos(glm::radians(-1.0f / 2)), sin(glm::radians(-1.0f / 2)) * glm::vec3(0.0f, 0.0f, 1.0f));
+	}
+
 }
 
 void Model::draw(GLuint shaders_program)
@@ -38,6 +73,12 @@ void Model::draw(GLuint shaders_program)
 	}
 
 	mesh.Draw(shaders_program);
+}
+
+void Model::playSound()
+{
+	if(Mix_PlayingMusic() == 0) 
+		Mix_PlayMusic(music2, 1); // play next ( two time <- loop == 1 )
 }
 
 void Model::loadModel(const string& path)
@@ -75,7 +116,7 @@ void Model::loadModel(const string& path)
 	directory = path.substr(0, path.find_last_of('/'));
 
 	cout << "		name nodes : " << endl;
-	callRecurs(scene->mRootNode);
+	showNodeName(scene->mRootNode);
 	cout << endl;
 
 	cout << "		name bones : " << endl;
@@ -89,12 +130,12 @@ void Model::loadModel(const string& path)
 	cout << endl;
 }
 
-void Model::callRecurs(aiNode* node)
+void Model::showNodeName(aiNode* node)
 {
 	cout << node->mName.data << endl;
 	for (int i = 0; i < node->mNumChildren; i++)
 	{
-		callRecurs(node->mChildren[i]);
+		showNodeName(node->mChildren[i]);
 	}
 }
 
@@ -423,7 +464,17 @@ void Model::readNodeHierarchy(float p_animation_time, const aiNode* p_node, cons
 		aiMatrix4x4 translate_matr;
 		aiMatrix4x4::Translation(translate_vector, translate_matr);
 
-		node_transform = translate_matr * rotate_matr * scaling_matr;
+		if ( string(node_anim->mNodeName.data) == string("Head"))
+		{
+			aiQuaternion rotate_head = aiQuaternion(rotate_head_xz.w, rotate_head_xz.x, rotate_head_xz.y, rotate_head_xz.z);
+
+			node_transform = translate_matr * (rotate_matr * aiMatrix4x4(rotate_head.GetMatrix())) * scaling_matr;
+		}
+		else
+		{
+			node_transform = translate_matr * rotate_matr * scaling_matr;
+		} 
+
 	}
 
 	aiMatrix4x4 global_transform = parent_transform * node_transform;

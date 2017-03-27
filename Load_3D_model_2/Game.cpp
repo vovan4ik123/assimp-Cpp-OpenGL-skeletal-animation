@@ -11,6 +11,8 @@
 #include "IL\ilu.h"
 #include "IL\ilut.h"
 
+#include "SDL\SDL_mixer.h"
+
 Game::Game()
 {
 	std::cout << "konstructor Game()" << std::endl;
@@ -70,6 +72,11 @@ void Game::init()
 		std::cout << "window create error " << std::endl;
 		return; // sdl could not initialize
 	}
+
+	// MIX_DEFAULT_FREQUENCY = sample rate = frequensy = speed playing
+	if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 4069) == -1)
+		cout << "Mixer NOT init !!" << endl;
+
 	SDL_SetWindowFullscreen(window, 0); // переключать оконный / полноэкранный режим и обратно без потери контекста GL 
 
 	glewExperimental = GL_TRUE; //все расширения с действительными точками входа будут выставлены.
@@ -136,6 +143,11 @@ void Game::handleEvents()
 void Game::update()
 {
 	triangle.update();
+}
+
+void Game::playSound()
+{
+	triangle.playSound();
 }
 
 void Game::render()

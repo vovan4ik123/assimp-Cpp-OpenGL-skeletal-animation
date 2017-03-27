@@ -46,12 +46,11 @@ int main(int argc, char* argv[])
 
 	while (Game::Instance()->isRunning())
 	{
-
 		frameStart = SDL_GetTicks();
 
-		Game::Instance()->handleEvents();
 		Game::Instance()->update();
 		Game::Instance()->render();
+		Game::Instance()->playSound();
 
 		frameTime = SDL_GetTicks() - frameStart; // time for full 1 loop
 		//std::cout <<" time for loop = " << frameTime << " milli sec"<< std::endl;
@@ -60,6 +59,8 @@ int main(int argc, char* argv[])
 		{
 			SDL_Delay((int)(DELAY_TIME - frameTime));
 		}
+
+		Game::Instance()->handleEvents();
 	}
 	Game::Instance()->clean();
 
