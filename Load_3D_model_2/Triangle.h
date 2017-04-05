@@ -16,7 +16,7 @@ public:
 	Triangle();
 	~Triangle();
 
-	GLfloat speed = 0.005f;
+	GLfloat speed = 0.02f;
 	//for camera
 	GLfloat delta_time = 0.0f;
 	GLfloat last_frame = 0.0f;

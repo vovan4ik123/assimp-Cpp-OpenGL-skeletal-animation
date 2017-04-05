@@ -1,5 +1,6 @@
 #include "Triangle.h"
 #include "Game.h"
+#include "SkyBox.h"
 
 #include "IL\il.h"
 #include "IL\ilu.h"
@@ -25,10 +26,8 @@ Triangle::~Triangle()
 void Triangle::init()
 {
 
-	perspective_view = camera.getViewMatrix();
-	perspective_projection = glm::perspective(glm::radians(camera.fov), (float)Game::Instance()->screen_width / (float)Game::Instance()->screen_height, 1.0f, 2000.0f); // пирамида
-
-	programID_scene = ForShader::makeProgram("shaders/triangles.vert", "shaders/triangles.frag");
+	// shader for animated model
+	programID_scene = ForShader::makeProgram("shaders/animated_model.vert", "shaders/animated_model.frag");
 
 	our_model.init(programID_scene);
 	our_model.loadModel("models/man/model.dae");
@@ -41,6 +40,8 @@ void Triangle::init()
 	//matr_model2 = glm::scale(matr_model, glm::vec3(0.3f, 0.3f, 0.3f));
 	matr_model2 = glm::translate(matr_model2, glm::vec3(5.0f, 0.0f, 0.0f));
 
+	// skybox
+	SkyBox::Instance()->init("images/skybox_violentday");
 }
 
 void Triangle::update()
@@ -48,6 +49,7 @@ void Triangle::update()
 	GLfloat current_frame = SDL_GetTicks();
 	delta_time = (current_frame - last_frame);
 	last_frame = current_frame;
+
 	// camera
 	camera.updateKey(delta_time, speed);
 	// mouse
@@ -80,10 +82,14 @@ void Triangle::update()
 	perspective_projection = glm::perspective(glm::radians(camera.fov), (float)Game::Instance()->screen_width / (float)Game::Instance()->screen_height, 1.0f, 2000.0f); // пирамида
 
 	our_model.update();
+
+	// delete translation from view matrix
+	SkyBox::Instance()->update(perspective_projection * glm::mat4(glm::mat3(perspective_view)));
 }
 
 void Triangle::render()
 {
+
 	glUseProgram(programID_scene);
 
 	glUniform3f(glGetUniformLocation(programID_scene, "view_pos"), camera.camera_pos.x, camera.camera_pos.y, camera.camera_pos.z);
@@ -117,14 +123,15 @@ void Triangle::render()
 	glm::mat4 matr_normals_cube2 = glm::mat4(glm::transpose(glm::inverse(matr_model2)));
 	glUniformMatrix4fv(glGetUniformLocation(programID_scene, "normals_matrix"), 1, GL_FALSE, glm::value_ptr(matr_normals_cube2));
 	our_model2.draw(programID_scene);
+	glUseProgram(0);
 
+	// draw skybox after scene
+	SkyBox::Instance()->draw();
 }
 
 void Triangle::playSound()
 {
 	our_model.playSound();
-
-	our_model2.playSound();
 }
 
 GLuint Triangle::loadImageToTexture(const char* image_path)

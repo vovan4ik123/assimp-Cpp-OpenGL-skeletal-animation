@@ -17,8 +17,8 @@ Game::Game()
 {
 	std::cout << "konstructor Game()" << std::endl;
 
-	screen_width = 800;
-	screen_height = 600;
+	screen_width = 1920;
+	screen_height = 1080;
 
 	running = true;
 }
@@ -72,11 +72,6 @@ void Game::init()
 		std::cout << "window create error " << std::endl;
 		return; // sdl could not initialize
 	}
-
-	// MIX_DEFAULT_FREQUENCY = sample rate = frequensy = speed playing
-	if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 4069) == -1)
-		cout << "Mixer NOT init !!" << endl;
-
 	SDL_SetWindowFullscreen(window, 0); // переключать оконный / полноэкранный режим и обратно без потери контекста GL 
 
 	glewExperimental = GL_TRUE; //все расширения с действительными точками входа будут выставлены.
@@ -92,6 +87,11 @@ void Game::init()
 	ilEnable(IL_ORIGIN_SET); 
 	// OpenGL have the 0.0 coordinate on the bottom y-axis, but images usually have 0.0 at the top of the y-axis.
 	ilOriginFunc(IL_ORIGIN_UPPER_LEFT); // 0, 0 textures in upper left side
+
+										// MIX_DEFAULT_FREQUENCY = sample rate = frequensy = speed playing
+	if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 4069) == -1)
+		cout << "Mixer NOT init !!" << endl;
+	Mix_VolumeMusic(1);
 
 	int w, h;
 	SDL_GetWindowSize(window, &w, &h);
@@ -130,24 +130,18 @@ void Game::init()
 	std::cout << "GL_CHECK = " << ff << std::endl;
 
 
-	triangle.init();	 
+	triangle.init();
 
 }
 
 void Game::handleEvents()
 {
 	InputHandler::Instance()->updateEvent();
-
 }
 
 void Game::update()
 {
 	triangle.update();
-}
-
-void Game::playSound()
-{
-	triangle.playSound();
 }
 
 void Game::render()
@@ -157,12 +151,17 @@ void Game::render()
 
 	triangle.render();
 
+
 	glFlush(); // опустошение буферов, отрисовка предыдущих команд // не ждет завершения
 	//glFinish(); //ждет пока все предыдущие команды не будут отрисованы
 	SDL_GL_SwapWindow(window);//отобразить только что нарисованный кадр на экране.
 	 
 }
 
+void Game::playSound()
+{
+	triangle.playSound();
+}
 
 void Game::clean()
 {
