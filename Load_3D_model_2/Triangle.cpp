@@ -29,13 +29,13 @@ void Triangle::init()
 	// shader for animated model
 	programID_scene = ForShader::makeProgram("shaders/animated_model.vert", "shaders/animated_model.frag");
 
-	our_model.init(programID_scene);
+	our_model.initShaders(programID_scene);
 	our_model.loadModel("models/man/model.dae");
 	//matr_model = glm::scale(matr_model, glm::vec3(0.1f, 0.1f, 0.1f));
 	matr_model = glm::rotate(matr_model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
 	our_model2.loadModel("models/astroboy/astroBoy_walk_Max.dae");
-	our_model2.init(programID_scene);
+	our_model2.initShaders(programID_scene);
 	matr_model2 = glm::rotate(matr_model2, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 	//matr_model2 = glm::scale(matr_model, glm::vec3(0.3f, 0.3f, 0.3f));
 	matr_model2 = glm::translate(matr_model2, glm::vec3(5.0f, 0.0f, 0.0f));
@@ -127,10 +127,21 @@ void Triangle::render()
 
 	// draw skybox after scene
 	SkyBox::Instance()->draw();
+
+	// music
+	music1 = Mix_LoadMUS("music/modern_talking_jet_airliner.mp3");
+	Mix_VolumeMusic(16);
+	Mix_PlayMusic(music1, 0); // -1 = NONSTOP playing
+
+	music2 = Mix_LoadMUS("music/02_modern_talking_you_can_win_if_you_want.mp3");
+
 }
 
 void Triangle::playSound()
 {
+	if (Mix_PlayingMusic() == 0)
+		Mix_PlayMusic(music2, 1); // play next ( two time <- loop == 1 )
+
 	our_model.playSound();
 }
 

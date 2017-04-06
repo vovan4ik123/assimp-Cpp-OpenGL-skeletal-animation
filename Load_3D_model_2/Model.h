@@ -24,7 +24,7 @@ public:
 	static const uint MAX_BONES = 100;
 
 
-	void init(GLuint shader_program);
+	void initShaders(GLuint shader_program);
 	void loadModel(const string& path);
 	void update();
 	void draw(GLuint shaders_program);
@@ -47,6 +47,7 @@ private:
 	aiMatrix4x4 m_global_inverse_transform;
 
 	GLuint m_bone_location[MAX_BONES];
+	float ticks_per_second = 0.0f;
 
 	void processNode(aiNode* node, const aiScene* scene);
 	void Model::processMesh(aiMesh* mesh, int mesh_index, const aiScene* scene, vector<Vertex> &vertices, vector<GLuint> &indices, vector<Texture> &textures, vector<VertexBoneData> &bones);
@@ -67,11 +68,6 @@ private:
 
 	// rotate Head
 	glm::quat rotate_head_xz = glm::quat(cos(glm::radians(0.0f)), sin(glm::radians(0.0f)) * glm::vec3(1.0f, 0.0f, 0.0f)); // this quad do nothingggggg!!!!!
-
-	
-	// music
-	Mix_Music* music = nullptr;
-	Mix_Music* music2 = nullptr;
 
 };
 

@@ -10,6 +10,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "SDL\SDL_mixer.h"
+
 class Triangle
 {
 public:
@@ -30,6 +32,10 @@ public:
 	Model our_model;
 	Model our_model2;
 	Model our_model3;
+
+	// music
+	Mix_Music* music1 = nullptr;
+	Mix_Music* music2 = nullptr;
 
 	glm::mat4 MVP;
 	glm::mat4 perspective_view;

@@ -14,24 +14,16 @@ Model::Model()
 
 Model::~Model()
 {
-
+	import.FreeScene();
 }
 
-void Model::init(GLuint shader_program)
+void Model::initShaders(GLuint shader_program)
 {
 	for (uint i = 0; i < MAX_BONES; i++) // get location all matrices of bones
 	{
 		string name = "bones[" + to_string(i) + "]";
-		char name_char[128];
-		strcpy_s(name_char, name.c_str());
-		m_bone_location[i] = glGetUniformLocation(shader_program, name_char);
+		m_bone_location[i] = glGetUniformLocation(shader_program, name.c_str());
 	}
-
-	music = Mix_LoadMUS("music/modern_talking_jet_airliner.mp3");
-	Mix_VolumeMusic(16);
-	Mix_PlayMusic(music, 0); // -1 = NONSTOP playing
-
-	music2 = Mix_LoadMUS("music/02_modern_talking_you_can_win_if_you_want.mp3");
 
 	// rotate head AND AXIS(y_z) about x !!!!!  Not be gimbal lock
 	//rotate_head_xz *= glm::quat(cos(glm::radians(-45.0f / 2)), sin(glm::radians(-45.0f / 2)) * glm::vec3(1.0f, 0.0f, 0.0f));
@@ -77,8 +69,7 @@ void Model::draw(GLuint shaders_program)
 
 void Model::playSound()
 {
-	if(Mix_PlayingMusic() == 0) 
-		Mix_PlayMusic(music2, 1); // play next ( two time <- loop == 1 )
+
 }
 
 void Model::loadModel(const string& path)
@@ -106,14 +97,23 @@ void Model::loadModel(const string& path)
 	m_global_inverse_transform = scene->mRootNode->mTransformation;
 	m_global_inverse_transform.Inverse();
 
+	if (scene->mAnimations[0]->mTicksPerSecond != 0)
+	{
+		ticks_per_second = scene->mAnimations[0]->mTicksPerSecond;
+	}
+	else
+	{
+		ticks_per_second = 25.0f;
+	}
+
+	//we give road to model.obj ! directoru = container for model.obj and textures and other files
+	directory = path.substr(0, path.find_last_of('/'));
+
 	cout << "scene->HasAnimations() 1: " << scene->HasAnimations() << endl;
 	cout << "scene->mNumMeshes 1: " << scene->mNumMeshes << endl;
 	cout << "scene->mAnimations[0]->mNumChannels 1: " << scene->mAnimations[0]->mNumChannels << endl;
 	cout << "scene->mAnimations[0]->mDuration 1: " << scene->mAnimations[0]->mDuration << endl;
 	cout << "scene->mAnimations[0]->mTicksPerSecond 1: " << scene->mAnimations[0]->mTicksPerSecond << endl;
-
-	//we give road to model.obj ! directoru = container for model.obj and textures and other files
-	directory = path.substr(0, path.find_last_of('/'));
 
 	cout << "		name nodes : " << endl;
 	showNodeName(scene->mRootNode);
@@ -308,11 +308,12 @@ vector<Texture> Model::LoadMaterialTexture(aiMaterial* mat, aiTextureType type, 
 
 uint Model::findPosition(float p_animation_time, const aiNodeAnim* p_node_anim)
 {
-	for (uint i = 0; i < p_node_anim->mNumPositionKeys - 1; i++)
+	// найти кадр который будет сразу после времени прошедшего после начала анимации
+	for (uint i = 0; i < p_node_anim->mNumPositionKeys - 1; i++) // КЛЮЧЕВЫЕ КАДРЫ анимации
 	{
-		if (p_animation_time < (float)p_node_anim->mPositionKeys[i + 1].mTime) // время меньше чем время следующей позиции
+		if (p_animation_time < (float)p_node_anim->mPositionKeys[i + 1].mTime) // сравнить со временем слудеющего !!!
 		{
-			return i; // значит возвращаем индекс текущей
+			return i; // НО ВЕРНУТЬ ИНДЕКС ТЕКУЩЕГО !!!!!!!!!!!!!!!!!! АААААААААААААААААААААААААААА
 		}
 	}
 
@@ -322,13 +323,12 @@ uint Model::findPosition(float p_animation_time, const aiNodeAnim* p_node_anim)
 
 uint Model::findRotation(float p_animation_time, const aiNodeAnim* p_node_anim)
 {
-	assert(p_node_anim->mNumRotationKeys > 0);
-
-	for (uint i = 0; i < p_node_anim->mNumRotationKeys - 1; i++)
+	// найти кадр который будет сразу после времени прошедшего после начала анимации
+	for (uint i = 0; i < p_node_anim->mNumRotationKeys - 1; i++) // КЛЮЧЕВЫЕ КАДРЫ анимации
 	{
-		if (p_animation_time < (float)p_node_anim->mRotationKeys[i + 1].mTime) // время меньше чем время следующей позиции
+		if (p_animation_time < (float)p_node_anim->mRotationKeys[i + 1].mTime) // сравнить со вмеренем слудеющего !!!
 		{
-			return i; // значит возвращаем индекс текущей
+			return i; // НО ВЕРНУТЬ ИНДЕКС ТЕКУЩЕГО !!!!!!!!!!!!!!!!!! АААААААААААААААААААААААААААА
 		}
 	}
 
@@ -338,15 +338,12 @@ uint Model::findRotation(float p_animation_time, const aiNodeAnim* p_node_anim)
 
 uint Model::findScaling(float p_animation_time, const aiNodeAnim* p_node_anim)
 {
-	assert(p_node_anim->mNumScalingKeys > 0);
-
-	for (uint i = 0; i < p_node_anim->mNumScalingKeys - 1; i++)
+	// найти кадр который будет сразу после времени прошедшего после начала анимации
+	for (uint i = 0; i < p_node_anim->mNumScalingKeys - 1; i++) // КЛЮЧЕВЫЕ КАДРЫ анимации
 	{
- 		if (p_animation_time < (float)p_node_anim->mScalingKeys[i + 1].mTime) // время меньше чем время следующей позиции
+ 		if (p_animation_time < (float)p_node_anim->mScalingKeys[i + 1].mTime) // сравнить со вмеренем слудеющего !!!
 		{
-			//cout << "p_node_anim->mScalingKeys[i + 1].mTime: " << p_node_anim->mScalingKeys[i + 1].mTime << endl;
-
-			return i; // значит возвращаем индекс текущей
+			return i; // НО ВЕРНУТЬ ИНДЕКС ТЕКУЩЕГО !!!!!!!!!!!!!!!!!! АААААААААААААААААААААААААААА
 		}
 	}
 
@@ -356,17 +353,17 @@ uint Model::findScaling(float p_animation_time, const aiNodeAnim* p_node_anim)
 
 aiVector3D Model::calcInterpolatedPosition(float p_animation_time, const aiNodeAnim* p_node_anim)
 {
-
-	if (p_node_anim->mNumPositionKeys == 1)
+	if (p_node_anim->mNumPositionKeys == 1) // Keys это ключевые кадры
 	{
 		return p_node_anim->mPositionKeys[0].mValue;
 	}
 
-	uint position_index = findPosition(p_animation_time, p_node_anim);
-	uint next_position_index = position_index + 1;
+	uint position_index = findPosition(p_animation_time, p_node_anim); // вернет индекс ключевого кадра который начался
+	uint next_position_index = position_index + 1; // индекс следующего ключевого кадра
 	assert(next_position_index < p_node_anim->mNumPositionKeys);
-
+	// время между кадрами
 	float delta_time = (float)(p_node_anim->mPositionKeys[next_position_index].mTime - p_node_anim->mPositionKeys[position_index].mTime);
+	// фактор = (время которое прошло ОТ НАЧАЛА ТЕКУЩЕГО КЛЮЧЕВОГО КАДРА) / на время между кадрами
 	float factor = (p_animation_time - (float)p_node_anim->mPositionKeys[position_index].mTime) / delta_time;
 	assert(factor >= 0.0f && factor <= 1.0f);
 	aiVector3D start = p_node_anim->mPositionKeys[position_index].mValue;
@@ -378,36 +375,46 @@ aiVector3D Model::calcInterpolatedPosition(float p_animation_time, const aiNodeA
 
 aiQuaternion Model::calcInterpolatedRotation(float p_animation_time, const aiNodeAnim* p_node_anim)
 {
-	if (p_node_anim->mNumRotationKeys == 1)
+	if (p_node_anim->mNumRotationKeys == 1) // Keys это ключевые кадры
 	{
 		return p_node_anim->mRotationKeys[0].mValue;
 	}
 
-	uint rotation_index = findRotation(p_animation_time, p_node_anim);
-	uint next_rotaion_index = rotation_index + 1;
-	assert(next_rotaion_index < p_node_anim->mNumRotationKeys);
-
-	float delta_time = (float)(p_node_anim->mRotationKeys[next_rotaion_index].mTime - p_node_anim->mRotationKeys[rotation_index].mTime);
+	uint rotation_index = findRotation(p_animation_time, p_node_anim); // вернет индекс ключевого кадра который начался
+	uint next_rotation_index = rotation_index + 1; // индекс следующего ключевого кадра
+	assert(next_rotation_index < p_node_anim->mNumRotationKeys);
+	// время между кадрами
+	float delta_time = (float)(p_node_anim->mRotationKeys[next_rotation_index].mTime - p_node_anim->mRotationKeys[rotation_index].mTime);
+	// фактор = (время которое прошло ОТ НАЧАЛА ТЕКУЩЕГО КЛЮЧЕВОГО КАДРА) / на время между кадрами
 	float factor = (p_animation_time - (float)p_node_anim->mRotationKeys[rotation_index].mTime) / delta_time;
+	
+	//cout << "p_node_anim->mRotationKeys[rotation_index].mTime: " << p_node_anim->mRotationKeys[rotation_index].mTime << endl;
+	//cout << "p_node_anim->mRotationKeys[next_rotaion_index].mTime: " << p_node_anim->mRotationKeys[next_rotation_index].mTime << endl;
+	//cout << "delta_time: " << delta_time << endl;
+	//cout << "animation_time: " << p_animation_time << endl;
+	//cout << "animation_time - mRotationKeys[rotation_index].mTime: " << (p_animation_time - (float)p_node_anim->mRotationKeys[rotation_index].mTime) << endl;
+	//cout << "factor: " << factor << endl << endl << endl;
+
 	assert(factor >= 0.0f && factor <= 1.0f);
 	aiQuaternion start_quat = p_node_anim->mRotationKeys[rotation_index].mValue;
-	aiQuaternion end_quat = p_node_anim->mRotationKeys[next_rotaion_index].mValue;
+	aiQuaternion end_quat = p_node_anim->mRotationKeys[next_rotation_index].mValue;
 
 	return nlerp(start_quat, end_quat, factor);
 }
 
 aiVector3D Model::calcInterpolatedScaling(float p_animation_time, const aiNodeAnim* p_node_anim)
 {
-	if (p_node_anim->mNumScalingKeys == 1)
+	if (p_node_anim->mNumScalingKeys == 1) // Keys это ключевые кадры
 	{
 		return p_node_anim->mScalingKeys[0].mValue;
 	}
 
-	uint scaling_index = findScaling(p_animation_time, p_node_anim);
-	uint next_scaling_index = scaling_index + 1;
+	uint scaling_index = findScaling(p_animation_time, p_node_anim); // вернет индекс ключевого кадра который начался
+	uint next_scaling_index = scaling_index + 1; // индекс следующего ключевого кадра
 	assert(next_scaling_index < p_node_anim->mNumScalingKeys);
-
+	// время между кадрами
 	float delta_time = (float)(p_node_anim->mScalingKeys[next_scaling_index].mTime - p_node_anim->mScalingKeys[scaling_index].mTime);
+	// фактор = (время которое прошло ОТ НАЧАЛА ТЕКУЩЕГО КЛЮЧЕВОГО КАДРА) / на время между кадрами
 	float  factor = (p_animation_time - (float)p_node_anim->mScalingKeys[scaling_index].mTime) / delta_time;
 	assert(factor >= 0.0f && factor <= 1.0f);
 	aiVector3D start = p_node_anim->mScalingKeys[scaling_index].mValue;
@@ -419,10 +426,11 @@ aiVector3D Model::calcInterpolatedScaling(float p_animation_time, const aiNodeAn
 
 const aiNodeAnim * Model::findNodeAnim(const aiAnimation * p_animation, const string p_node_name)
 {
-	// channel in animation its key frame
-	for (uint i = 0; i < p_animation->mNumChannels; i++) //каждый канал затрагивает один узел
+	// channel in animation its transformation for bones
+	// numChannels == numBones
+	for (uint i = 0; i < p_animation->mNumChannels; i++)
 	{
-		const aiNodeAnim* node_anim = p_animation->mChannels[i]; // Описывает анимацию одного node ( один ключевой кадр)
+		const aiNodeAnim* node_anim = p_animation->mChannels[i]; // Описывает анимацию одного node
 		if (string(node_anim->mNodeName.data) == p_node_name) // если имена совпадают то анимация node представлена этой node_anim
 		{
 			return node_anim;
@@ -437,7 +445,6 @@ void Model::readNodeHierarchy(float p_animation_time, const aiNode* p_node, cons
 
 	string node_name(p_node->mName.data);
 
-	//aiAnimation состоит из key frames data для нескольких node.
 	//Каждому node, на который воздействует анимация, предоставляется отдельная серия данных(aiNodeAnim).
 	const aiAnimation* animation = scene->mAnimations[0];
 	aiMatrix4x4 node_transform = p_node->mTransformation;
@@ -497,19 +504,9 @@ void Model::boneTransform(float time_in_sec, vector<aiMatrix4x4>& transforms)
 {
 	aiMatrix4x4 identity_matrix; // = mat4(1.0f);
 
-	float ticks_per_second = 0.0f;
-	if (scene->mAnimations[0]->mTicksPerSecond != 0)
-	{
-		ticks_per_second = scene->mAnimations[0]->mTicksPerSecond;
-	}
-	else
-	{
-		ticks_per_second = 25.0f;
-	}
 	float time_in_ticks = time_in_sec * ticks_per_second;
 	float animation_time = fmod(time_in_ticks, (float)scene->mAnimations[0]->mDuration); //деление по модулю флот чисел
-	assert(animation_time < scene->mAnimations[0]->mDuration);
-	//cout << "animation_time: " << animation_time << endl;
+	// animation_time - время которое прошло в этот момент от начала анимации (от первого ключевого кадра в анимации )
 
 	readNodeHierarchy(animation_time, scene->mRootNode, identity_matrix);
 	
