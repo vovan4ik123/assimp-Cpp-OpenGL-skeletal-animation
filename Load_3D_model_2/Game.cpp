@@ -99,28 +99,16 @@ void Game::init()
 		cout << "Mixer NOT init !!" << endl;
 	Mix_VolumeMusic(1);
 
-	int w, h;
-	SDL_GetWindowSize(window, &w, &h);
-	glViewport(0, 0, w, h); // разместит все соответственно новому разрешению
-
+	glViewport(0, 0, screen_width, screen_height); // задать прямоугольник окна
 	glEnable(GL_DEPTH_TEST); // включаем тест глубины
-	//glEnable(GL_MULTISAMPLE); // for standart antialiasing in opengl
-							  //glDepthFunc(GL_LESS); // фн сравнения буферов ( GL_LESS = проходит если входящее значение глубины меньше сохраненного)
-							  //glEnable(GL_DITHER);
-							  //glEnable(GL_COLOR_LOGIC_OP);
 
-							  // установка смешивания цветов для размывания линий
-	glEnable(GL_LINE_SMOOTH); // сглаживание линий
-	glEnable(GL_BLEND); // включить смешивание
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // определяет расчет цвета для сглаженной линий 
-	//glHint(GL_LINE_SMOOTH_HINT, GL_NICEST); // выбрать макс качетсво расчета цвета пикселя для линий
-											// конец установки смешивания цветов для размывания линий
-											// для полигонов
-											//glEnable(GL_POLYGON_SMOOTH);
-											//glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST); //GL_FASTEST = выбрать макс скорость расчета (это не везде поддерживается )
-											//glBlendFunc(GL_SRC_ALPHA_SATURATE, GL_ONE); // определяет расчет цвета для сглаженной фигуры
-
-											// конец
+	glEnable(GL_LINE_SMOOTH);
+	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+	glEnable(GL_POINT_SMOOTH);
+	glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	// antialiasing for figures need be do library who created window
 
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // устанавливаем фоновый цвет
 	glClearDepth(1.0);

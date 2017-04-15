@@ -15,6 +15,11 @@ Mesh::Mesh(vector<Vertex> vertic, vector<GLuint> ind, vector<Texture> textur, ve
 
 Mesh::~Mesh()
 {
+	//cout << "									 Mesh::~Mesh() " << endl;
+	//glDeleteBuffers(1, &VBO_vertices);
+	//glDeleteBuffers(1, &VBO_bones);
+	//glDeleteBuffers(1, &EBO_indices);
+	//glDeleteVertexArrays(1, &VAO);
 }
 
 void VertexBoneData::addBoneData(uint bone_id, float weight)

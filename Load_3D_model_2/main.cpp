@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
 	}
 	Game::Instance()->clean();
 
-
+	//system("PAUSE");
 	return 0;
 
 }

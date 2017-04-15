@@ -28,10 +28,9 @@ public:
 	GLboolean mouse_first_in;
 	Camera camera;
 
-	GLuint programID_scene;
-	Model our_model;
-	Model our_model2;
-	Model our_model3;
+	GLuint shaders_animated_model;
+	Model model_man;
+	Model model_astroboy;
 
 	// music
 	Mix_Music* music1 = nullptr;
@@ -40,9 +39,13 @@ public:
 	glm::mat4 MVP;
 	glm::mat4 perspective_view;
 	glm::mat4 perspective_projection;
-	glm::mat4 matr_model;
-	glm::mat4 matr_model2;
-	glm::mat4 matr_model3;
+	glm::mat4 matr_model_1;
+	glm::mat4 matr_model_2;
+
+	// text
+	glm::mat4 text_matrix_2D; // orthographic projection
+	glm::mat4 text_matrix_3D_model_1; // perspective  projection
+	glm::mat4 text_matrix_3D_model_2; // perspective  projection
 
 	void init();
 	void update();

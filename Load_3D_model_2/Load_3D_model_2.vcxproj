@@ -107,7 +107,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>res/lib/x64/Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc140-mt.lib;DevIL.lib;ILU.lib;ILUT.lib;freeglutd.lib;glew32d.lib;SDL2.lib;SDL2main.lib;SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc140-mt.lib;DevIL.lib;ILU.lib;ILUT.lib;freeglutd.lib;glew32d.lib;SDL2.lib;SDL2main.lib;SDL2_mixer.lib;freetyped.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -152,6 +152,7 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="SkyBox.h" />
+    <ClInclude Include="TextRendering.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="Vector2D.h" />
   </ItemGroup>
@@ -163,6 +164,7 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="SkyBox.cpp" />
+    <ClCompile Include="TextRendering.cpp" />
     <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
