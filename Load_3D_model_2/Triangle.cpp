@@ -147,6 +147,7 @@ void Triangle::render()
 	// draw skybox after scene
 	SkyBox::Instance()->draw();
 
+	glDepthFunc(GL_ALWAYS);
 	// draw text after skybox so that mixing works
 	// text 2D
 	glm::mat4 translate_2d_text = glm::translate(glm::mat4(), glm::vec3(20.0f, 65.0f, 0.0f));
@@ -164,6 +165,7 @@ void Triangle::render()
 	TextRendering::Instance()->draw("Agent_1", glm::vec3(0.1f, 1.0f, 0.0f), text_matrix_3D_model_1);
 	TextRendering::Instance()->draw("Agent_2", glm::vec3(0.1f, 1.0f, 0.0f), text_matrix_3D_model_2);
 
+	glDepthFunc(GL_LESS);
 
 	// music
 	music1 = Mix_LoadMUS("music/modern_talking_jet_airliner.mp3");
