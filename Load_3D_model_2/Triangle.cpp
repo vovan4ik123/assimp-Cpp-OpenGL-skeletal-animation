@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "SkyBox.h"
 #include "TextRendering.h"
+#include "ForShader.h"
 
 #include "IL\il.h"
 #include "IL\ilu.h"
@@ -148,7 +149,7 @@ void Triangle::render()
 	SkyBox::Instance()->draw();
 
 	glDepthFunc(GL_ALWAYS);
-	// draw text after skybox so that mixing works
+	// draw text after skybox so that antialiasing for lines works
 	// text 2D
 	glm::mat4 translate_2d_text = glm::translate(glm::mat4(), glm::vec3(20.0f, 65.0f, 0.0f));
 	glm::mat4 scale_2d_text = glm::scale(glm::mat4(), glm::vec3(0.5f, 0.5f, 0.5f));
@@ -159,7 +160,6 @@ void Triangle::render()
 
 	translate_2d_text = glm::translate(glm::mat4(), glm::vec3(20.0f, 5.0f, 0.0f));
 	TextRendering::Instance()->draw("Buttons: W, S, A, D, SPACE = move  (ALT + F4 = stop)", glm::vec3(0.1f, 1.0f, 0.0f), text_matrix_2D * translate_2d_text * scale_2d_text);
-
 
 	// text 3D 
 	TextRendering::Instance()->draw("Agent_1", glm::vec3(0.1f, 1.0f, 0.0f), text_matrix_3D_model_1);

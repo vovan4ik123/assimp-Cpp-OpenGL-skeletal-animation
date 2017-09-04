@@ -21,7 +21,7 @@ void Model::initShaders(GLuint shader_program)
 {
 	for (uint i = 0; i < MAX_BONES; i++) // get location all matrices of bones
 	{
-		string name = "bones[" + to_string(i) + "]";
+		string name = "bones[" + to_string(i) + "]";// name like in shader
 		m_bone_location[i] = glGetUniformLocation(shader_program, name.c_str());
 	}
 
@@ -57,14 +57,17 @@ void Model::update()
 void Model::draw(GLuint shaders_program)
 {
 	vector<aiMatrix4x4> transforms;
-	boneTransform((float) SDL_GetTicks() / 1000.0f, transforms);
+	boneTransform((double) SDL_GetTicks() / 1000.0f, transforms);
 
-	for (uint i = 0; i < transforms.size(); i++)
+	for (uint i = 0; i < transforms.size(); i++) // move all matrices for actual model position to shader
 	{
 		glUniformMatrix4fv(m_bone_location[i], 1, GL_TRUE, (const GLfloat*)&transforms[i]);
 	}
 
-	mesh.Draw(shaders_program);
+	for (int i = 0; i < meshes.size(); i++)
+	{
+		meshes[i].Draw(shaders_program);
+	}
 }
 
 void Model::playSound()
@@ -79,13 +82,26 @@ void Model::loadModel(const string& path)
 	// например камера, арматура, куб, источник света, часть тела персонажа(нога, руга, голова).
 	// к node может быть прикреплена кость 
 	// в кости есть массив вершин на которые кость влияет (веса от 0 до 1).
-	// каждый канал это одна aiNodeAnim.
+	// каждый mChannels это одна aiNodeAnim.
 	// В aiNodeAnim собраны преобразования(scaling rotate translate) для той кости с которой у них обшее название
 	// эти преобразования изменят те вершины, ID которых есть в кости с силой равной весу.
 	// кость просто содержит ID и вес вершин на которые повляет трансформация из aiNodeAnim ( у ниe c костью общее имя )
-	// (массив вершин и вес преобразований для вершины есть в каждой кости)
+	// (массив вершин и вес преобразований для каждой вершины есть в каждой кости)
 
 	// результат: конкретная трансформация повлияет на конкретную вершину с определенной силой.
+
+	// how work skeletal animation in assimp //translate from google =) :
+	// node is a separate part of the loaded model (the model is not only a character)
+	// for example, the camera, armature, cube, light source, part of the character's body (leg, rug, head).
+	// a bone can be attached to the node
+	// in the bone there is an array of vertices on which the bone affects (weights from 0 to 1).
+	// each mChannels is one aiNodeAnim.
+	// In aiNodeAnim accumulated transformations (scaling rotate translate) for the bone with which they have the common name
+	// these transformations will change those vertices whose IDs are in the bone with a force equal to the weight.
+	// the bone simply contains the ID and the weight of the vertices to which the transformation from aiNodeAnim is moving (with no common name for the bone)
+	// (the vertex array and the weight of the transforms for each vertex are in each bone)
+
+	// result: a specific transformation will affect a particular vertex with a certain force.
 
 	scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
 
@@ -97,7 +113,7 @@ void Model::loadModel(const string& path)
 	m_global_inverse_transform = scene->mRootNode->mTransformation;
 	m_global_inverse_transform.Inverse();
 
-	if (scene->mAnimations[0]->mTicksPerSecond != 0)
+	if (scene->mAnimations[0]->mTicksPerSecond != 0.0)
 	{
 		ticks_per_second = scene->mAnimations[0]->mTicksPerSecond;
 	}
@@ -106,14 +122,14 @@ void Model::loadModel(const string& path)
 		ticks_per_second = 25.0f;
 	}
 
-	//we give road to model.obj ! directoru = container for model.obj and textures and other files
+	// directoru = container for model.obj and textures and other files
 	directory = path.substr(0, path.find_last_of('/'));
 
 	cout << "scene->HasAnimations() 1: " << scene->HasAnimations() << endl;
 	cout << "scene->mNumMeshes 1: " << scene->mNumMeshes << endl;
 	cout << "scene->mAnimations[0]->mNumChannels 1: " << scene->mAnimations[0]->mNumChannels << endl;
 	cout << "scene->mAnimations[0]->mDuration 1: " << scene->mAnimations[0]->mDuration << endl;
-	cout << "scene->mAnimations[0]->mTicksPerSecond 1: " << scene->mAnimations[0]->mTicksPerSecond << endl;
+	cout << "scene->mAnimations[0]->mTicksPerSecond 1: " << scene->mAnimations[0]->mTicksPerSecond << endl << endl;
 
 	cout << "		name nodes : " << endl;
 	showNodeName(scene->mRootNode);
@@ -123,7 +139,7 @@ void Model::loadModel(const string& path)
 	processNode(scene->mRootNode, scene);
 
 	cout << "		name nodes animation : " << endl;
-	for (int i = 0; i < scene->mAnimations[0]->mNumChannels; i++)
+	for (uint i = 0; i < scene->mAnimations[0]->mNumChannels; i++)
 	{// у нас только одна анимация в этой сцене
 		cout<< scene->mAnimations[0]->mChannels[i]->mNodeName.C_Str() << endl;
 	}
@@ -133,7 +149,7 @@ void Model::loadModel(const string& path)
 void Model::showNodeName(aiNode* node)
 {
 	cout << node->mName.data << endl;
-	for (int i = 0; i < node->mNumChildren; i++)
+	for (uint i = 0; i < node->mNumChildren; i++)
 	{
 		showNodeName(node->mChildren[i]);
 	}
@@ -141,37 +157,42 @@ void Model::showNodeName(aiNode* node)
 
 void Model::processNode(aiNode* node, const aiScene* scene)
 {
+	Mesh mesh;
+	for (uint i = 0; i < scene->mNumMeshes; i++)
+	{
+		aiMesh* ai_mesh = scene->mMeshes[i];
+		mesh = processMesh(ai_mesh, scene);
+		meshes.push_back(mesh); //accumulate all meshes in one vector
+	}
+
+}
+
+Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
+{
+	std::cout << "bones: " << mesh->mNumBones << " vertices: " << mesh->mNumVertices << std::endl;
+
 	vector<Vertex> vertices;
 	vector<GLuint> indices;
 	vector<Texture> textures;
 	vector<VertexBoneData> bones_id_weights_for_each_vertex;
 
-	m_mesh_infos.resize(scene->mNumMeshes);
+	//size и resize - нужны для работы с реальным числом элементов вектора
+	//capacity и reserve - для работы с памятью.
+	//size - выдает количество элементов в векторе
+	//resize - изменяет количество элементов в векторе
+	//capacity - выдает под сколько элементов выделена память
+	//reserve - резервиует память
 
-	int num_vertic = 0;
-	for (int i = 0; i < scene->mNumMeshes; i++) // определяем где в ашем общем векторе будет находится начало вершин следующей сетки
-	{
-		m_mesh_infos[i].base_index = num_vertic; // base_index == base_vertex
-		num_vertic += scene->mMeshes[i]->mNumVertices;
-	}
-	vertices.reserve(num_vertic);
-	indices.reserve(num_vertic);
-	bones_id_weights_for_each_vertex.resize(num_vertic);
+	vertices.reserve(mesh->mNumVertices); // просто выделяем память БЕЗ ИНИЦИАЛИЗАЦИИ !!! елементов вектора
+	indices.reserve(mesh->mNumVertices); // дальше нада будет юзать vector.push_back(i);
 
-	for (int i = 0; i < scene->mNumMeshes; i++)
-	{
-		aiMesh* mesh = scene->mMeshes[i];
-		processMesh(mesh, i, scene, vertices, indices, textures, bones_id_weights_for_each_vertex); // собираем все вершины из всех мешей в одном векторе
-	}
+	// .resize(n) == меняет размер вектора и ИНИЦИАЛЬЗИРУЕТ !!!! все добавленные эелементы если вектор стал больше 
+	// дальше в фн processMesh(....) будут сразу вызываться фн() из елементов вектора
+	// поетому его елементы нада инициализировать сразу ( или потом для каждого вызывать vector.push_back(i); перед использованием елемента )
+	bones_id_weights_for_each_vertex.resize(mesh->mNumVertices);
 
-	mesh = Mesh(vertices, indices, textures, bones_id_weights_for_each_vertex); // собрать все в одном меше
-}
-
-void Model::processMesh(aiMesh* mesh, int mesh_index, const aiScene* scene, vector<Vertex> &vertices, vector<GLuint> &indices, vector<Texture> &textures, vector<VertexBoneData> &bones_id_weights)
-{
-	std::cout << "bones: " << mesh->mNumBones << " vertices: " << mesh->mNumVertices << std::endl;
-
-	for (int i = 0; i < mesh->mNumVertices; i++)
+	//vertices
+	for (uint i = 0; i < mesh->mNumVertices; i++)
 	{
 		Vertex vertex;
 		glm::vec3 vector;
@@ -210,42 +231,43 @@ void Model::processMesh(aiMesh* mesh, int mesh_index, const aiScene* scene, vect
 	}
 
 	// indices
-	for (int i = 0; i < mesh->mNumFaces; i++)
+	for (uint i = 0; i < mesh->mNumFaces; i++)
 	{
 		aiFace face = mesh->mFaces[i]; // индексы вершин в нашем собранном векторе из нескольких мешей
-		indices.push_back(m_mesh_infos[mesh_index].base_index + face.mIndices[0]); // индексы начнутся с того места с которого добавятся новые вершины 
-		indices.push_back(m_mesh_infos[mesh_index].base_index + face.mIndices[1]); // из новой сетки (в новой сетке вершины и их индексы начинаются с начала)
-		indices.push_back(m_mesh_infos[mesh_index].base_index + face.mIndices[2]);
+		indices.push_back(face.mIndices[0]); // индексы начнутся с того места с которого добавятся новые вершины 
+		indices.push_back(face.mIndices[1]); // из новой сетки (в новой сетке вершины и их индексы начинаются с начала)
+		indices.push_back(face.mIndices[2]);
 	}
 
 	// material
 	if (mesh->mMaterialIndex >= 0)
 	{
-
+		//all pointers created in assimp will be deleted automaticaly when we call import.FreeScene();
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-		vector<Texture> diffuse_maps = this->LoadMaterialTexture(material, aiTextureType_DIFFUSE, "texture_diffuse");
+		vector<Texture> diffuse_maps = LoadMaterialTexture(material, aiTextureType_DIFFUSE, "texture_diffuse");
 		bool exist = false;
-		for (int i = 0; i < textures.size() && diffuse_maps.size() != 0; i++)
+		for (int i = 0; (i < textures.size()) && (diffuse_maps.size() != 0); i++)
 		{
 			if (textures[i].path ==  diffuse_maps[0].path) // должна быть максимум 1 текстура диффузе и 1 спекуляр в одном меше
 			{
 				exist = true;
 			}
-		} // add if texture not exist
-		if(!exist && diffuse_maps.size() != 0) textures.push_back(diffuse_maps[0]);
+		}
+		if(!exist && diffuse_maps.size() != 0) textures.push_back(diffuse_maps[0]); //ассимп сохраняет по 1 текстуре !!!
 		//textures.insert(textures.end(), diffuse_maps.begin(), diffuse_maps.end());
 
-		vector<Texture> specular_maps = this->LoadMaterialTexture(material, aiTextureType_SPECULAR, "texture_specular");
+		vector<Texture> specular_maps = LoadMaterialTexture(material, aiTextureType_SPECULAR, "texture_specular");
 		exist = false;
-		for (int i = 0; i < textures.size() && specular_maps.size() != 0; i++)
+		for (int i = 0; (i < textures.size()) && (specular_maps.size() != 0); i++)
 		{
 			if (textures[i].path == specular_maps[0].path) // должна быть максимум 1 текстура диффузе и 1 спекуляр в одном меше
 			{
 				exist = true;
 			}
-		}// add if texture not exist
-		if (!exist  && specular_maps.size() != 0) textures.push_back(specular_maps[0]);
+		}
+		if (!exist  && specular_maps.size() != 0) textures.push_back(specular_maps[0]); //ассимп сохраняет по 1 текстуре !!!
 		//textures.insert(textures.end(), specular_maps.begin(), specular_maps.end());
+
 	}
 
 	// load bones
@@ -253,6 +275,7 @@ void Model::processMesh(aiMesh* mesh, int mesh_index, const aiScene* scene, vect
 	{
 		uint bone_index = 0;
 		string bone_name(mesh->mBones[i]->mName.data);
+
 		cout << mesh->mBones[i]->mName.data << endl;
 
 		if (m_bone_mapping.find(bone_name) == m_bone_mapping.end()) // проверить нет ли в векторе элемента
@@ -274,20 +297,22 @@ void Model::processMesh(aiMesh* mesh, int mesh_index, const aiScene* scene, vect
 
 		for (uint j = 0; j < mesh->mBones[i]->mNumWeights; j++)
 		{
-			uint vertex_id = m_mesh_infos[mesh_index].base_index + mesh->mBones[i]->mWeights[j].mVertexId; // ид вершины на которую влияет выбранная кость
+			uint vertex_id = mesh->mBones[i]->mWeights[j].mVertexId; // ид вершины на которую влияет выбранная кость
 			float weight = mesh->mBones[i]->mWeights[j].mWeight;
-			bones_id_weights[vertex_id].addBoneData(bone_index, weight); // у каждой вершины будет кость и ее вес
+			bones_id_weights_for_each_vertex[vertex_id].addBoneData(bone_index, weight); // у каждой вершины будет кость и ее вес
 
 			// индекс вершины vertex_id на которую кость с индексом bone_index  имеет вес weight
 			//cout << " vertex_id: " << vertex_id << "	bone_index: " << bone_index << "		weight: " << weight << endl;
 		}
 	} 
+
+	return Mesh(vertices, indices, textures, bones_id_weights_for_each_vertex);
 }
 
 vector<Texture> Model::LoadMaterialTexture(aiMaterial* mat, aiTextureType type, string type_name)
 {
 	vector<Texture> textures;
-	for (int i = 0; i < mat->GetTextureCount(type); i++)
+	for (uint i = 0; i < mat->GetTextureCount(type); i++)
 	{
 		aiString ai_str;
 		mat->GetTexture(type, i, &ai_str);
@@ -426,14 +451,14 @@ aiVector3D Model::calcInterpolatedScaling(float p_animation_time, const aiNodeAn
 
 const aiNodeAnim * Model::findNodeAnim(const aiAnimation * p_animation, const string p_node_name)
 {
-	// channel in animation its transformation for bones
+	// channel in animation contains aiNodeAnim (aiNodeAnim its transformation for bones)
 	// numChannels == numBones
 	for (uint i = 0; i < p_animation->mNumChannels; i++)
 	{
 		const aiNodeAnim* node_anim = p_animation->mChannels[i]; // Описывает анимацию одного node
-		if (string(node_anim->mNodeName.data) == p_node_name) // если имена совпадают то анимация node представлена этой node_anim
+		if (string(node_anim->mNodeName.data) == p_node_name)
 		{
-			return node_anim;
+			return node_anim;// если имена совпадают то анимация кости (к которой прикреплена node) представлена этой node_anim
 		}
 	}
 
@@ -486,7 +511,7 @@ void Model::readNodeHierarchy(float p_animation_time, const aiNode* p_node, cons
 
 	aiMatrix4x4 global_transform = parent_transform * node_transform;
 
-	// Если node представляет собой bone в иерархии, то имя node должно совпадать с именем bone !!!
+	// Если к node для анимации прикреплена bone, то имя node должно совпадать с именем bone !!!
 	if (m_bone_mapping.find(node_name) != m_bone_mapping.end()) // true if node_name exist in bone_mapping
 	{
 		uint bone_index = m_bone_mapping[node_name];
@@ -500,12 +525,12 @@ void Model::readNodeHierarchy(float p_animation_time, const aiNode* p_node, cons
 
 }
 
-void Model::boneTransform(float time_in_sec, vector<aiMatrix4x4>& transforms)
+void Model::boneTransform(double time_in_sec, vector<aiMatrix4x4>& transforms)
 {
 	aiMatrix4x4 identity_matrix; // = mat4(1.0f);
 
-	float time_in_ticks = time_in_sec * ticks_per_second;
-	float animation_time = fmod(time_in_ticks, (float)scene->mAnimations[0]->mDuration); //деление по модулю флот чисел
+	double time_in_ticks = time_in_sec * ticks_per_second;
+	float animation_time = fmod(time_in_ticks, scene->mAnimations[0]->mDuration); //деление по модулю (остаток от деления)
 	// animation_time - время которое прошло в этот момент от начала анимации (от первого ключевого кадра в анимации )
 
 	readNodeHierarchy(animation_time, scene->mRootNode, identity_matrix);
@@ -543,8 +568,10 @@ glm::mat4 Model::aiToGlm(aiMatrix4x4 ai_matr)
 
 aiQuaternion Model::nlerp(aiQuaternion a, aiQuaternion b, float blend)
 {
+	//cout << a.w + a.x + a.y + a.z << endl;
 	a.Normalize();
 	b.Normalize();
+
 	aiQuaternion result;
 	float dot_product = a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
 	float one_minus_blend = 1.0f - blend;

@@ -54,11 +54,11 @@ void Game::init()
 
 		SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1); // set to 1 to require hardware acceleration
 
-		SDL_DisplayMode dm;
-		SDL_GetDesktopDisplayMode(0, &dm); // if resolution change, this function will return the previous native display mode !!!
-		screen_width = dm.w;
-		screen_height = dm.h;
-		std::cout << dm.w << "    " << dm.h << std::endl;
+		//SDL_DisplayMode dm;
+		//SDL_GetDesktopDisplayMode(0, &dm); // if resolution change in SDL, this function will return the previous native display mode !!!
+		//screen_width = dm.w;
+		//screen_height = dm.h;
+		//std::cout << dm.w << "    " << dm.h << std::endl;
 
 		window = SDL_CreateWindow("Chapter 1",
 			SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,

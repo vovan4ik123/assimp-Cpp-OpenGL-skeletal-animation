@@ -279,7 +279,8 @@ FT_BEGIN_HEADER
                                   unsigned char  *weights );
 
 
-  /*
+  /**************************************************************************
+   *
    * @constant:
    *   FT_PARAM_TAG_LCD_FILTER_WEIGHTS
    *
@@ -288,7 +289,7 @@ FT_BEGIN_HEADER
    *   corresponding argument specifies the five LCD filter weights for a
    *   given face (if using @FT_LOAD_TARGET_LCD, for example), overriding
    *   the global default values or the values set up with
-   *   @FT_Library_Set_LcdFilterWeights.
+   *   @FT_Library_SetLcdFilterWeights.
    *
    */
 #define FT_PARAM_TAG_LCD_FILTER_WEIGHTS \

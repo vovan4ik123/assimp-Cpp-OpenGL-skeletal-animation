@@ -62,7 +62,7 @@ TextRendering::TextRendering()
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO); // 1 квадрат = 6 вершин ( 4 флоат значения на каждую вершину // vec2 pos, vec2 texture ) 
+	glBindBuffer(GL_ARRAY_BUFFER, VBO); // 1 квадрат = 6 вершин ( 5 флоат значения на каждую вершину ) 
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 5, NULL, GL_DYNAMIC_DRAW); //  GL_DYNAMIC_DRAW - если часто обновляем память
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), 0);
@@ -98,7 +98,7 @@ void TextRendering::draw(string text, glm::vec3 color, glm::mat4 matrix)
 	{
 		Character ch = characters[*c];
 
-		float x_pos = offset_x + ch.bearing.x ;
+		float x_pos = offset_x + ch.bearing.x;
 		float y_pos = offset_y - (ch.size.y - ch.bearing.y);
 
 		float w = ch.size.x;

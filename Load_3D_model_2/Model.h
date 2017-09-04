@@ -37,11 +37,10 @@ public:
 private:
 	Assimp::Importer import;
 	const aiScene* scene;
-	Mesh mesh; // accumulate all meshes from scene in one mesh
+	vector<Mesh> meshes; // one mesh in one object
 	string directory;
-	vector<MeshInfo> m_mesh_infos;
 
-	map<string, uint> m_bone_mapping; // maps a bone name to its index
+	map<string, uint> m_bone_mapping; // maps a bone name and their index
 	uint m_num_bones = 0;
 	vector<BoneMatrix> m_bone_matrices;
 	aiMatrix4x4 m_global_inverse_transform;
@@ -50,7 +49,7 @@ private:
 	float ticks_per_second = 0.0f;
 
 	void processNode(aiNode* node, const aiScene* scene);
-	void Model::processMesh(aiMesh* mesh, int mesh_index, const aiScene* scene, vector<Vertex> &vertices, vector<GLuint> &indices, vector<Texture> &textures, vector<VertexBoneData> &bones);
+	Mesh processMesh(aiMesh* mesh, const aiScene* scene);
 	vector<Texture> LoadMaterialTexture(aiMaterial* mat, aiTextureType type, string type_name);
 
 	
@@ -64,7 +63,7 @@ private:
 	aiVector3D calcInterpolatedScaling(float p_animation_time, const aiNodeAnim* p_node_anim);
 
 	void readNodeHierarchy(float p_animation_time, const aiNode* p_node, const aiMatrix4x4 parent_transform);
-	void boneTransform(float time_in_sec, vector<aiMatrix4x4>& transforms);
+	void boneTransform(double time_in_sec, vector<aiMatrix4x4>& transforms);
 
 	// rotate Head
 	glm::quat rotate_head_xz = glm::quat(cos(glm::radians(0.0f)), sin(glm::radians(0.0f)) * glm::vec3(1.0f, 0.0f, 0.0f)); // this quad do nothingggggg!!!!!

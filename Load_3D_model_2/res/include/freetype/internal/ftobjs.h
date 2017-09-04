@@ -433,8 +433,6 @@ FT_BEGIN_HEADER
   } FT_GlyphSlot_InternalRec;
 
 
-#if 0
-
   /*************************************************************************/
   /*                                                                       */
   /* <Struct>                                                              */
@@ -442,17 +440,25 @@ FT_BEGIN_HEADER
   /*                                                                       */
   /* <Description>                                                         */
   /*    This structure contains the internal fields of each FT_Size        */
-  /*    object.  Currently, it's empty.                                    */
+  /*    object.                                                            */
+  /*                                                                       */
+  /* <Fields>                                                              */
+  /*    module_data      :: Data specific to a driver module.              */
+  /*                                                                       */
+  /*    autohint_mode    :: The used auto-hinting mode.                    */
+  /*                                                                       */
+  /*    autohint_metrics :: Metrics used by the auto-hinter.               */
   /*                                                                       */
   /*************************************************************************/
 
   typedef struct  FT_Size_InternalRec_
   {
-    /* empty */
+    void*  module_data;
+
+    FT_Render_Mode   autohint_mode;
+    FT_Size_Metrics  autohint_metrics;
 
   } FT_Size_InternalRec;
-
-#endif
 
 
   /*************************************************************************/

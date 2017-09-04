@@ -3,7 +3,7 @@
 layout(location = 0) in vec3 in_position;
 layout(location = 1) in vec3 in_normal;
 layout(location = 2) in vec2 in_text_coords;
-layout(location = 3) in ivec4 bone_ids;
+layout(location = 3) in ivec4 bone_ids;     // INT pointer
 layout(location = 4) in vec4 weights;
 
 out vec2 text_coords;

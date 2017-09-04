@@ -7,11 +7,8 @@ in vec3 normal;
 struct Material
 {
 	sampler2D texture_diffuse1;
-	sampler2D texture_diffuse2;
-	sampler2D texture_diffuse3;
 
 	sampler2D texture_specular1;
-	sampler2D texture_specular2;
 
 	float shininess;
 	float transparency;
@@ -34,7 +31,6 @@ uniform Material material;
 uniform PointLight point_light;
 uniform vec3 view_pos;
 
-out vec4 f_color;
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 view_dir, vec3 frag_pos)
 {
@@ -52,6 +48,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 view_dir, vec3 frag_pos)
 	vec3 diffuse = light.diffuse * diff * vec3(texture(material.texture_diffuse1, text_coords));
     vec3 specular = light.specular * spec * vec3(texture(material.texture_specular1, text_coords));
 
+	
 	ambient *= attenuation;
     diffuse *= attenuation;
     specular *= attenuation;
@@ -61,15 +58,11 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 view_dir, vec3 frag_pos)
 
 void main()
 {
-	//vec4 texel = texture(material.texture_diffuse1, text_coords);
-	//if(texel.a < 0.5) // esli texel budet zapisan w depth bufer on wserawno narisujetsia DARZE esli alpha w teksture = 0
-		//discard; // ne zapisywaet piksel w bufer glubiny esli ALPHA < 0.5
-
 	vec3 view_dir = normalize(view_pos - frag_pos);
 
 	vec4 calc_color = vec4( CalcPointLight(point_light, normal, view_dir, frag_pos), 1.0);
 	calc_color.a *= material.transparency;
-	f_color = calc_color;
+	
+	gl_FragColor = calc_color;
 
-	//f_color = vec4(1.0f, 0.0f, 0.0f, 1.0f);
 }

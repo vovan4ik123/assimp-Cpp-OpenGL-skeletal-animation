@@ -771,7 +771,7 @@ FT_BEGIN_HEADER
     FT_ENC_TAG( FT_ENCODING_WANSUNG, 'w', 'a', 'n', 's' ),
     FT_ENC_TAG( FT_ENCODING_JOHAB,   'j', 'o', 'h', 'a' ),
 
-    /* for backwards compatibility */
+    /* for backward compatibility */
     FT_ENCODING_GB2312     = FT_ENCODING_PRC,
     FT_ENCODING_MS_SJIS    = FT_ENCODING_SJIS,
     FT_ENCODING_MS_GB2312  = FT_ENCODING_PRC,
@@ -826,8 +826,8 @@ FT_BEGIN_HEADER
   /*                                                                       */
   /*    platform_id :: An ID number describing the platform for the        */
   /*                   following encoding ID.  This comes directly from    */
-  /*                   the TrueType specification gets emulated            */
-  /*                   for other formats.                                  */
+  /*                   the TrueType specification and gets emulated for    */
+  /*                   other formats.                                      */
   /*                                                                       */
   /*    encoding_id :: A platform specific encoding number.  This also     */
   /*                   comes from the TrueType specification and gets      */
@@ -1506,27 +1506,34 @@ FT_BEGIN_HEADER
   /*                    fractional pixels.  Only relevant for scalable     */
   /*                    font formats.                                      */
   /*                                                                       */
-  /*    ascender     :: The ascender in 26.6 fractional pixels.  See       */
-  /*                    @FT_FaceRec for the details.                       */
+  /*    ascender     :: The ascender in 26.6 fractional pixels, rounded up */
+  /*                    to an integer value.  See @FT_FaceRec for the      */
+  /*                    details.                                           */
   /*                                                                       */
-  /*    descender    :: The descender in 26.6 fractional pixels.  See      */
-  /*                    @FT_FaceRec for the details.                       */
+  /*    descender    :: The descender in 26.6 fractional pixels, rounded   */
+  /*                    down to an integer value.  See @FT_FaceRec for the */
+  /*                    details.                                           */
   /*                                                                       */
-  /*    height       :: The height in 26.6 fractional pixels.  See         */
-  /*                    @FT_FaceRec for the details.                       */
+  /*    height       :: The height in 26.6 fractional pixels, rounded to   */
+  /*                    an integer value.  See @FT_FaceRec for the         */
+  /*                    details.                                           */
   /*                                                                       */
   /*    max_advance  :: The maximum advance width in 26.6 fractional       */
-  /*                    pixels.  See @FT_FaceRec for the details.          */
+  /*                    pixels, rounded to an integer value.  See          */
+  /*                    @FT_FaceRec for the details.                       */
   /*                                                                       */
   /* <Note>                                                                */
   /*    The scaling values, if relevant, are determined first during a     */
   /*    size changing operation.  The remaining fields are then set by the */
   /*    driver.  For scalable formats, they are usually set to scaled      */
-  /*    values of the corresponding fields in @FT_FaceRec.                 */
+  /*    values of the corresponding fields in @FT_FaceRec.  Some values    */
+  /*    like ascender or descender are rounded for historical reasons;     */
+  /*    more precise values (for outline fonts) can be derived by scaling  */
+  /*    the corresponding @FT_FaceRec values manually.                     */
   /*                                                                       */
-  /*    Note that due to glyph hinting, these values might not be exact    */
-  /*    for certain fonts.  Thus they must be treated as unreliable        */
-  /*    with an error margin of at least one pixel!                        */
+  /*    Note that due to glyph hinting and the selected rendering mode     */
+  /*    these values are usually not exact; consequently, they must be     */
+  /*    treated as unreliable with an error margin of at least one pixel!  */
   /*                                                                       */
   /*    Indeed, the only way to get the exact metrics is to render _all_   */
   /*    glyphs.  As this would be a definite performance hit, it is up to  */
@@ -1748,11 +1755,37 @@ FT_BEGIN_HEADER
   /*    `slot->format' is also changed to @FT_GLYPH_FORMAT_BITMAP.         */
   /*                                                                       */
   /*    Here is a small pseudo code fragment that shows how to use         */
-  /*    `lsb_delta' and `rsb_delta':                                       */
+  /*    `lsb_delta' and `rsb_delta' to do fractional positioning of        */
+  /*    glyphs:                                                            */
   /*                                                                       */
   /*    {                                                                  */
-  /*      FT_Pos  origin_x       = 0;                                      */
-  /*      FT_Pos  prev_rsb_delta = 0;                                      */
+  /*      FT_GlyphSlot  slot     = face->glyph;                            */
+  /*      FT_Pos        origin_x = 0;                                      */
+  /*                                                                       */
+  /*                                                                       */
+  /*      for all glyphs do                                                */
+  /*        <load glyph with `FT_Load_Glyph'>                              */
+  /*                                                                       */
+  /*        FT_Outline_Translate( slot->outline, origin_x & 63, 0 );       */
+  /*                                                                       */
+  /*        <save glyph image, or render glyph, or ...>                    */
+  /*                                                                       */
+  /*        <compute kern between current and next glyph                   */
+  /*         and add it to `origin_x'>                                     */
+  /*                                                                       */
+  /*        origin_x += slot->advance.x;                                   */
+  /*        origin_x += slot->rsb_delta - slot->lsb_relta;                 */
+  /*      endfor                                                           */
+  /*    }                                                                  */
+  /*                                                                       */
+  /*    Here is another small pseudo code fragment that shows how to use   */
+  /*    `lsb_delta' and `rsb_delta' to improve integer positioning of      */
+  /*    glyphs:                                                            */
+  /*                                                                       */
+  /*    {                                                                  */
+  /*      FT_GlyphSlot  slot           = face->glyph;                      */
+  /*      FT_Pos        origin_x       = 0;                                */
+  /*      FT_Pos        prev_rsb_delta = 0;                                */
   /*                                                                       */
   /*                                                                       */
   /*      for all glyphs do                                                */
@@ -1761,16 +1794,16 @@ FT_BEGIN_HEADER
   /*                                                                       */
   /*        <load glyph with `FT_Load_Glyph'>                              */
   /*                                                                       */
-  /*        if ( prev_rsb_delta - face->glyph->lsb_delta >= 32 )           */
+  /*        if ( prev_rsb_delta - slot->lsb_delta >= 32 )                  */
   /*          origin_x -= 64;                                              */
-  /*        else if ( prev_rsb_delta - face->glyph->lsb_delta < -32 )      */
+  /*        else if ( prev_rsb_delta - slot->lsb_delta < -32 )             */
   /*          origin_x += 64;                                              */
   /*                                                                       */
-  /*        prev_rsb_delta = face->glyph->rsb_delta;                       */
+  /*        prev_rsb_delta = slot->rsb_delta;                              */
   /*                                                                       */
   /*        <save glyph image, or render glyph, or ...>                    */
   /*                                                                       */
-  /*        origin_x += face->glyph->advance.x;                            */
+  /*        origin_x += slot->advance.x;                                   */
   /*      endfor                                                           */
   /*    }                                                                  */
   /*                                                                       */
@@ -2004,7 +2037,7 @@ FT_BEGIN_HEADER
   /*    `num_params' and `params' is used.  They are ignored otherwise.    */
   /*                                                                       */
   /*    Ideally, both the `pathname' and `params' fields should be tagged  */
-  /*    as `const'; this is missing for API backwards compatibility.  In   */
+  /*    as `const'; this is missing for API backward compatibility.  In    */
   /*    other words, applications should treat them as read-only.          */
   /*                                                                       */
   typedef struct  FT_Open_Args_
@@ -2540,6 +2573,10 @@ FT_BEGIN_HEADER
   /*    glyph relative to this size.  For more information refer to        */
   /*    `https://www.freetype.org/freetype2/docs/glyphs/glyphs-2.html'.    */
   /*                                                                       */
+  /*    Contrary to @FT_Set_Char_Size, this function doesn't have special  */
+  /*    code to normalize zero-valued widths, heights, or resolutions      */
+  /*    (which lead to errors in most cases).                              */
+  /*                                                                       */
   /*    Don't use this function if you are using the FreeType cache API.   */
   /*                                                                       */
   FT_EXPORT( FT_Error )
@@ -2928,11 +2965,21 @@ FT_BEGIN_HEADER
    *     A lighter hinting algorithm for gray-level modes.  Many generated
    *     glyphs are fuzzier but better resemble their original shape.  This
    *     is achieved by snapping glyphs to the pixel grid only vertically
-   *     (Y-axis), as is done by Microsoft's ClearType and Adobe's
-   *     proprietary font renderer.  This preserves inter-glyph spacing in
+   *     (Y-axis), as is done by FreeType's new CFF engine or Microsoft's
+   *     ClearType font renderer.  This preserves inter-glyph spacing in
    *     horizontal text.  The snapping is done either by the native font
    *     driver, if the driver itself and the font support it, or by the
    *     auto-hinter.
+   *
+   *     Advance widths are rounded to integer values; however, using the
+   *     `lsb_delta' and `rsb_delta' fields of @FT_GlyphSlotRec, it is
+   *     possible to get fractional advance widths for sub-pixel positioning
+   *     (which is recommended to use).
+   *
+   *     If configuration option AF_CONFIG_OPTION_TT_SIZE_METRICS is active,
+   *     TrueType-like metrics are used to make this mode behave similarly
+   *     as in unpatched FreeType versions between 2.4.6 and 2.7.1
+   *     (inclusive).
    *
    *   FT_LOAD_TARGET_MONO ::
    *     Strong hinting algorithm that should only be used for monochrome
@@ -2967,6 +3014,13 @@ FT_BEGIN_HEADER
    *
    *       FT_Render_Glyph( face->glyph, FT_RENDER_MODE_LCD );
    *     }
+   *
+   *   In general, you should stick with one rendering mode.  For example,
+   *   switching between @FT_LOAD_TARGET_NORMAL and @FT_LOAD_TARGET_MONO
+   *   enforces a lot of recomputation for TrueType fonts, which is slow.
+   *   Another reason is caching: Selecting a different mode usually causes
+   *   changes in both the outlines and the rasterized bitmaps; it is thus
+   *   necessary to empty the cache after a mode switch to avoid false hits.
    *
    */
 #define FT_LOAD_TARGET_( x )   ( (FT_Int32)( (x) & 15 ) << 16 )
@@ -3150,7 +3204,7 @@ FT_BEGIN_HEADER
   /*    this does not translate to 50% brightness for that pixel on our    */
   /*    sRGB and gamma~2.2 screens.  Due to their non-linearity, they      */
   /*    dwell longer in the darks and only a pixel value of about 186      */
-  /*    results in 50% brightness – 128 ends up too dark on both bright    */
+  /*    results in 50% brightness -- 128 ends up too dark on both bright   */
   /*    and dark backgrounds.  The net result is that dark text looks      */
   /*    burnt-out, pixely and blotchy on bright background, bright text    */
   /*    too frail on dark backgrounds, and colored text on colored         */
@@ -4387,8 +4441,8 @@ FT_BEGIN_HEADER
    *
    */
 #define FREETYPE_MAJOR  2
-#define FREETYPE_MINOR  7
-#define FREETYPE_PATCH  1
+#define FREETYPE_MINOR  8
+#define FREETYPE_PATCH  0
 
 
   /*************************************************************************/
