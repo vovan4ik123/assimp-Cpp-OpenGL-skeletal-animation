@@ -3,7 +3,6 @@
 
 #include "Game.h"
 #include <SDL\SDL.h>
-#include "GL\freeglut.h"
 
 #define vova
 #define PARAM
