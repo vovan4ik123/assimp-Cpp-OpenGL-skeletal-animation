@@ -122,6 +122,9 @@ void Game::init()
 	//SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &ff);
 	std::cout << "GL_CHECK = " << ff << std::endl;
 
+	int buffer;
+	SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &buffer);
+	printf("SDL_GL_DOUBLEBUFFER: %d \n", buffer);
 
 	triangle.init();
 
