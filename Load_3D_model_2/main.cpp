@@ -16,9 +16,6 @@ const int LOOP_TIME = 1000 / FPS; // = 16 milisec // 1000 millisec == 1 sec
 
 int main(int argc, char* argv[])
 {
-	//glutInit(&argc, argv);
-	//glutInitContextVersion(4, 3);
-	//glutInitContextProfile(GLUT_CORE_PROFILE);
 
 #ifdef vova
 	std::cout << "vova define" <<std::endl;
