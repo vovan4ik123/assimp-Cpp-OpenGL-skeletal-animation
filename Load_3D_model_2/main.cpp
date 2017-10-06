@@ -3,14 +3,13 @@
 
 #include "Game.h"
 #include <SDL\SDL.h>
-#include "GL\freeglut.h"
 
 #define vova
 #define PARAM
 
 // 60 powtorenij w sec = kazdyje 16 milisec
 const int FPS = 60;
-const int DELAY_TIME = 1000 / FPS; // = 16 milisec // 1000 millisec == 1 sec
+const int LOOP_TIME = 1000 / FPS; // = 16 milisec // 1000 millisec == 1 sec
 
 // framebuffer - часть памяти видеокарты в которой хранятся пиксели которые отобразятся на мониторе.
 
@@ -55,9 +54,9 @@ int main(int argc, char* argv[])
 		frameTime = SDL_GetTicks() - frameStart; // time for full 1 loop
 		//std::cout <<" time for loop = " << frameTime << " milli sec"<< std::endl;
 
-		if (frameTime < DELAY_TIME)
+		if (frameTime < LOOP_TIME)
 		{
-			SDL_Delay((int)(DELAY_TIME - frameTime));
+			SDL_Delay((int)(LOOP_TIME - frameTime));
 		}
 
 		Game::Instance()->handleEvents();

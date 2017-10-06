@@ -5,7 +5,6 @@
 #include <assert.h>
 
 #include "GL\glew.h"
-#include "GL\freeglut.h"
 
 #include "IL\il.h"
 #include "IL\ilu.h"
