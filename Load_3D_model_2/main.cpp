@@ -1,11 +1,7 @@
-#include <iostream>
-#include <string>
-
 #include "Game.h"
 #include <SDL\SDL.h>
-
-#define vova
-#define PARAM
+#include <iostream>
+#include <string>
 
 // 60 powtorenij w sec = kazdyje 16 milisec
 const int FPS = 60;
@@ -16,26 +12,6 @@ const int LOOP_TIME = 1000 / FPS; // = 16 milisec // 1000 millisec == 1 sec
 
 int main(int argc, char* argv[])
 {
-
-#ifdef vova
-	std::cout << "vova define" <<std::endl;
-#else
-	std::cout << "vova NOT define" << std::endl;
-#endif // vova
-
-#if defined(PARAM)
-	std::cout << "PARAM define" << std::endl;
-#elif defined(DEBUG)
-	std::cout << "DEBUG define" << std::endl;
-#else
-	std::cout << "DEBUG NOT define" << std::endl;
-#endif // defined(PARAM)
-
-#ifdef _DEBUG
-	std::cout << "debug ON" << std::endl;
-#endif // DEBUG
-
-
 	Uint32 frameStart, frameTime;
 
 	Game::Instance()->init();
@@ -49,7 +25,7 @@ int main(int argc, char* argv[])
 		Game::Instance()->playSound();
 
 		frameTime = SDL_GetTicks() - frameStart; // time for full 1 loop
-		//std::cout <<" time for loop = " << frameTime << " milli sec"<< std::endl;
+		//std::cout <<"frame time = " << frameTime << " milli sec"<< std::endl;
 
 		if (frameTime < LOOP_TIME)
 		{

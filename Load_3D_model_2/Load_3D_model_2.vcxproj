@@ -107,7 +107,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>res/lib/x64/Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc140-mt.lib;DevIL.lib;ILU.lib;ILUT.lib;glew32d.lib;SDL2.lib;SDL2main.lib;SDL2_mixer.lib;freetyped.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc140-mt.lib;DevIL.lib;ILU.lib;ILUT.lib;glew32d.lib;SDL2.lib;SDL2main.lib;SDL2_mixer.lib;freetyped.lib;freeglutd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
