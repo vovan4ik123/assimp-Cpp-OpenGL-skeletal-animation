@@ -1,16 +1,14 @@
 #include "Game.h"
 #include "InputHandler.h"
-
-#include <iostream>
-#include <assert.h>
-
 #include "GL\glew.h"
-
+#include "GL\freeglut.h"
 #include "IL\il.h"
 #include "IL\ilu.h"
 #include "IL\ilut.h"
-
 #include "SDL\SDL_mixer.h"
+
+#include <iostream>
+#include <assert.h>
 
 Game::Game()
 {
@@ -101,26 +99,10 @@ void Game::init()
 	glViewport(0, 0, screen_width, screen_height); // задать прямоугольник окна
 	glEnable(GL_DEPTH_TEST); // включаем тест глубины
 
-	glEnable(GL_LINE_SMOOTH);
-	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-	glEnable(GL_POINT_SMOOTH);
-	glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	// antialiasing for figures need be do library who created window
-
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // устанавливаем фоновый цвет
-	glClearDepth(1.0);
-
 	//glMatrixMode(GL_PROJECTION); режим текущей матрицы.( GL_MODELVIEW- переходим в трехмерный режим(по умолчанию))
 	//glLoadIdentity(); // replace the current matrix(modelview ) with the user matrix (GL_PROJECTION)
 	//glOrtho(0.0, 920.0, 900.0, 0.0, -1.0, 1.0);  - типа 2д экран становится
 	//glMatrixMode(GL_MODELVIEW);
-
-	int ff;
-	glGetIntegerv(GL_SAMPLE_BUFFERS, &ff); // проверить что включено(ff станет = 1) а что нет(ff = 0)?
-	//SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &ff);
-	std::cout << "GL_CHECK = " << ff << std::endl;
 
 	int buffer;
 	SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &buffer);

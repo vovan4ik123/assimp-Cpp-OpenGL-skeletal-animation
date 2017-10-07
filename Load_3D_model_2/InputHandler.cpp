@@ -1,5 +1,5 @@
 #include "InputHandler.h"
-#include "game.h"
+#include "Game.h"
 
 
 InputHandler::InputHandler()

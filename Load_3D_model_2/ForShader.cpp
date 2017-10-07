@@ -1,7 +1,6 @@
 #include "ForShader.h"
 
 
-
 ForShader::ForShader()
 {
 }
