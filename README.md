@@ -6,7 +6,7 @@ Instruction:
   1. download zip.     
   2. unpack.   
   3. open Load_3D_model_2.sln in visual studio.     
-  4. rebuild this project(project configured for Debug x64 bit system).       
+  4. rebuild this project (project configured for Debug x64 bit system).       
   5. run this
   
   6. button 1 2 3 4  - controls head of model
