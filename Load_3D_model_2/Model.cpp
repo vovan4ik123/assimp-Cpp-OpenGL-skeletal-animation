@@ -1,4 +1,4 @@
-#include "Model.h"
+п»ї#include "Model.h"
 #include "Triangle.h"
 #include "InputHandler.h"
 
@@ -77,20 +77,7 @@ void Model::playSound()
 
 void Model::loadModel(const string& path)
 {
-	// how work skeletal animation in assimp :
-	// node это отдельная часть загруженной модели (модель это не только персонаж)
-	// например камера, арматура, куб, источник света, часть тела персонажа(нога, руга, голова).
-	// к node может быть прикреплена кость 
-	// в кости есть массив вершин на которые кость влияет (веса от 0 до 1).
-	// каждый mChannels это одна aiNodeAnim.
-	// В aiNodeAnim собраны преобразования(scaling rotate translate) для той кости с которой у них обшее название
-	// эти преобразования изменят те вершины, ID которых есть в кости с силой равной весу.
-	// кость просто содержит ID и вес вершин на которые повляет трансформация из aiNodeAnim ( у ниe c костью общее имя )
-	// (массив вершин и вес преобразований для каждой вершины есть в каждой кости)
-
-	// результат: конкретная трансформация повлияет на конкретную вершину с определенной силой.
-
-	// how work skeletal animation in assimp //translate from google =) :
+	// how work skeletal animation in assimp //translated with google =) :
 	// node is a separate part of the loaded model (the model is not only a character)
 	// for example, the camera, armature, cube, light source, part of the character's body (leg, rug, head).
 	// a bone can be attached to the node
@@ -140,7 +127,7 @@ void Model::loadModel(const string& path)
 
 	cout << "		name nodes animation : " << endl;
 	for (uint i = 0; i < scene->mAnimations[0]->mNumChannels; i++)
-	{// у нас только одна анимация в этой сцене
+	{// пїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 		cout<< scene->mAnimations[0]->mChannels[i]->mNodeName.C_Str() << endl;
 	}
 	cout << endl;
@@ -176,19 +163,19 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	vector<Texture> textures;
 	vector<VertexBoneData> bones_id_weights_for_each_vertex;
 
-	//size и resize - нужны для работы с реальным числом элементов вектора
-	//capacity и reserve - для работы с памятью.
-	//size - выдает количество элементов в векторе
-	//resize - изменяет количество элементов в векторе
-	//capacity - выдает под сколько элементов выделена память
-	//reserve - резервиует память
+	//size пїЅ resize - пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	//capacity пїЅ reserve - пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ.
+	//size - пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	//resize - пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	//capacity - пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+	//reserve - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 
-	vertices.reserve(mesh->mNumVertices); // просто выделяем память БЕЗ ИНИЦИАЛИЗАЦИИ !!! елементов вектора
-	indices.reserve(mesh->mNumVertices); // дальше нада будет юзать vector.push_back(i);
+	vertices.reserve(mesh->mNumVertices); // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ !!! пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	indices.reserve(mesh->mNumVertices); // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ vector.push_back(i);
 
-	// .resize(n) == меняет размер вектора и ИНИЦИАЛЬЗИРУЕТ !!!! все добавленные эелементы если вектор стал больше 
-	// дальше в фн processMesh(....) будут сразу вызываться фн() из елементов вектора
-	// поетому его елементы нада инициализировать сразу ( или потом для каждого вызывать vector.push_back(i); перед использованием елемента )
+	// .resize(n) == пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ !!!! пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ 
+	// пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅ processMesh(....) пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ() пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ ( пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ vector.push_back(i); пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ )
 	bones_id_weights_for_each_vertex.resize(mesh->mNumVertices);
 
 	//vertices
@@ -233,9 +220,9 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	// indices
 	for (uint i = 0; i < mesh->mNumFaces; i++)
 	{
-		aiFace face = mesh->mFaces[i]; // индексы вершин в нашем собранном векторе из нескольких мешей
-		indices.push_back(face.mIndices[0]); // индексы начнутся с того места с которого добавятся новые вершины 
-		indices.push_back(face.mIndices[1]); // из новой сетки (в новой сетке вершины и их индексы начинаются с начала)
+		aiFace face = mesh->mFaces[i]; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+		indices.push_back(face.mIndices[0]); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ 
+		indices.push_back(face.mIndices[1]); // пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ (пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ)
 		indices.push_back(face.mIndices[2]);
 	}
 
@@ -248,24 +235,24 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 		bool exist = false;
 		for (int i = 0; (i < textures.size()) && (diffuse_maps.size() != 0); i++)
 		{
-			if (textures[i].path ==  diffuse_maps[0].path) // должна быть максимум 1 текстура диффузе и 1 спекуляр в одном меше
+			if (textures[i].path ==  diffuse_maps[0].path) // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ 1 пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ 1 пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 			{
 				exist = true;
 			}
 		}
-		if(!exist && diffuse_maps.size() != 0) textures.push_back(diffuse_maps[0]); //ассимп сохраняет по 1 текстуре !!!
+		if(!exist && diffuse_maps.size() != 0) textures.push_back(diffuse_maps[0]); //пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ 1 пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ !!!
 		//textures.insert(textures.end(), diffuse_maps.begin(), diffuse_maps.end());
 
 		vector<Texture> specular_maps = LoadMaterialTexture(material, aiTextureType_SPECULAR, "texture_specular");
 		exist = false;
 		for (int i = 0; (i < textures.size()) && (specular_maps.size() != 0); i++)
 		{
-			if (textures[i].path == specular_maps[0].path) // должна быть максимум 1 текстура диффузе и 1 спекуляр в одном меше
+			if (textures[i].path == specular_maps[0].path) // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ 1 пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ 1 пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 			{
 				exist = true;
 			}
 		}
-		if (!exist  && specular_maps.size() != 0) textures.push_back(specular_maps[0]); //ассимп сохраняет по 1 текстуре !!!
+		if (!exist  && specular_maps.size() != 0) textures.push_back(specular_maps[0]); //пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ 1 пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ !!!
 		//textures.insert(textures.end(), specular_maps.begin(), specular_maps.end());
 
 	}
@@ -278,7 +265,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 
 		cout << mesh->mBones[i]->mName.data << endl;
 
-		if (m_bone_mapping.find(bone_name) == m_bone_mapping.end()) // проверить нет ли в векторе элемента
+		if (m_bone_mapping.find(bone_name) == m_bone_mapping.end()) // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		{
 			// Allocate an index for a new bone
 			bone_index = m_num_bones;
@@ -297,11 +284,11 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 
 		for (uint j = 0; j < mesh->mBones[i]->mNumWeights; j++)
 		{
-			uint vertex_id = mesh->mBones[i]->mWeights[j].mVertexId; // ид вершины на которую влияет выбранная кость
+			uint vertex_id = mesh->mBones[i]->mWeights[j].mVertexId; // пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 			float weight = mesh->mBones[i]->mWeights[j].mWeight;
-			bones_id_weights_for_each_vertex[vertex_id].addBoneData(bone_index, weight); // у каждой вершины будет кость и ее вес
+			bones_id_weights_for_each_vertex[vertex_id].addBoneData(bone_index, weight); // пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅ пїЅпїЅпїЅ
 
-			// индекс вершины vertex_id на которую кость с индексом bone_index  имеет вес weight
+			// пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ vertex_id пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ bone_index  пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ weight
 			//cout << " vertex_id: " << vertex_id << "	bone_index: " << bone_index << "		weight: " << weight << endl;
 		}
 	} 
@@ -333,12 +320,12 @@ vector<Texture> Model::LoadMaterialTexture(aiMaterial* mat, aiTextureType type, 
 
 uint Model::findPosition(float p_animation_time, const aiNodeAnim* p_node_anim)
 {
-	// найти кадр который будет сразу после времени прошедшего после начала анимации
-	for (uint i = 0; i < p_node_anim->mNumPositionKeys - 1; i++) // КЛЮЧЕВЫЕ КАДРЫ анимации
+	// пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	for (uint i = 0; i < p_node_anim->mNumPositionKeys - 1; i++) // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	{
-		if (p_animation_time < (float)p_node_anim->mPositionKeys[i + 1].mTime) // сравнить со временем слудеющего !!!
+		if (p_animation_time < (float)p_node_anim->mPositionKeys[i + 1].mTime) // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ !!!
 		{
-			return i; // НО ВЕРНУТЬ ИНДЕКС ТЕКУЩЕГО !!!!!!!!!!!!!!!!!! АААААААААААААААААААААААААААА
+			return i; // пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ !!!!!!!!!!!!!!!!!! пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		}
 	}
 
@@ -348,12 +335,12 @@ uint Model::findPosition(float p_animation_time, const aiNodeAnim* p_node_anim)
 
 uint Model::findRotation(float p_animation_time, const aiNodeAnim* p_node_anim)
 {
-	// найти кадр который будет сразу после времени прошедшего после начала анимации
-	for (uint i = 0; i < p_node_anim->mNumRotationKeys - 1; i++) // КЛЮЧЕВЫЕ КАДРЫ анимации
+	// пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	for (uint i = 0; i < p_node_anim->mNumRotationKeys - 1; i++) // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	{
-		if (p_animation_time < (float)p_node_anim->mRotationKeys[i + 1].mTime) // сравнить со вмеренем слудеющего !!!
+		if (p_animation_time < (float)p_node_anim->mRotationKeys[i + 1].mTime) // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ !!!
 		{
-			return i; // НО ВЕРНУТЬ ИНДЕКС ТЕКУЩЕГО !!!!!!!!!!!!!!!!!! АААААААААААААААААААААААААААА
+			return i; // пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ !!!!!!!!!!!!!!!!!! пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		}
 	}
 
@@ -363,12 +350,12 @@ uint Model::findRotation(float p_animation_time, const aiNodeAnim* p_node_anim)
 
 uint Model::findScaling(float p_animation_time, const aiNodeAnim* p_node_anim)
 {
-	// найти кадр который будет сразу после времени прошедшего после начала анимации
-	for (uint i = 0; i < p_node_anim->mNumScalingKeys - 1; i++) // КЛЮЧЕВЫЕ КАДРЫ анимации
+	// пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	for (uint i = 0; i < p_node_anim->mNumScalingKeys - 1; i++) // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	{
- 		if (p_animation_time < (float)p_node_anim->mScalingKeys[i + 1].mTime) // сравнить со вмеренем слудеющего !!!
+ 		if (p_animation_time < (float)p_node_anim->mScalingKeys[i + 1].mTime) // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ !!!
 		{
-			return i; // НО ВЕРНУТЬ ИНДЕКС ТЕКУЩЕГО !!!!!!!!!!!!!!!!!! АААААААААААААААААААААААААААА
+			return i; // пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ !!!!!!!!!!!!!!!!!! пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		}
 	}
 
@@ -378,17 +365,17 @@ uint Model::findScaling(float p_animation_time, const aiNodeAnim* p_node_anim)
 
 aiVector3D Model::calcInterpolatedPosition(float p_animation_time, const aiNodeAnim* p_node_anim)
 {
-	if (p_node_anim->mNumPositionKeys == 1) // Keys это ключевые кадры
+	if (p_node_anim->mNumPositionKeys == 1) // Keys пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 	{
 		return p_node_anim->mPositionKeys[0].mValue;
 	}
 
-	uint position_index = findPosition(p_animation_time, p_node_anim); // вернет индекс ключевого кадра который начался
-	uint next_position_index = position_index + 1; // индекс следующего ключевого кадра
+	uint position_index = findPosition(p_animation_time, p_node_anim); // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+	uint next_position_index = position_index + 1; // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 	assert(next_position_index < p_node_anim->mNumPositionKeys);
-	// время между кадрами
+	// пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	float delta_time = (float)(p_node_anim->mPositionKeys[next_position_index].mTime - p_node_anim->mPositionKeys[position_index].mTime);
-	// фактор = (время которое прошло ОТ НАЧАЛА ТЕКУЩЕГО КЛЮЧЕВОГО КАДРА) / на время между кадрами
+	// пїЅпїЅпїЅпїЅпїЅпїЅ = (пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ) / пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	float factor = (p_animation_time - (float)p_node_anim->mPositionKeys[position_index].mTime) / delta_time;
 	assert(factor >= 0.0f && factor <= 1.0f);
 	aiVector3D start = p_node_anim->mPositionKeys[position_index].mValue;
@@ -400,17 +387,17 @@ aiVector3D Model::calcInterpolatedPosition(float p_animation_time, const aiNodeA
 
 aiQuaternion Model::calcInterpolatedRotation(float p_animation_time, const aiNodeAnim* p_node_anim)
 {
-	if (p_node_anim->mNumRotationKeys == 1) // Keys это ключевые кадры
+	if (p_node_anim->mNumRotationKeys == 1) // Keys пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 	{
 		return p_node_anim->mRotationKeys[0].mValue;
 	}
 
-	uint rotation_index = findRotation(p_animation_time, p_node_anim); // вернет индекс ключевого кадра который начался
-	uint next_rotation_index = rotation_index + 1; // индекс следующего ключевого кадра
+	uint rotation_index = findRotation(p_animation_time, p_node_anim); // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+	uint next_rotation_index = rotation_index + 1; // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 	assert(next_rotation_index < p_node_anim->mNumRotationKeys);
-	// время между кадрами
+	// пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	float delta_time = (float)(p_node_anim->mRotationKeys[next_rotation_index].mTime - p_node_anim->mRotationKeys[rotation_index].mTime);
-	// фактор = (время которое прошло ОТ НАЧАЛА ТЕКУЩЕГО КЛЮЧЕВОГО КАДРА) / на время между кадрами
+	// пїЅпїЅпїЅпїЅпїЅпїЅ = (пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ) / пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	float factor = (p_animation_time - (float)p_node_anim->mRotationKeys[rotation_index].mTime) / delta_time;
 	
 	//cout << "p_node_anim->mRotationKeys[rotation_index].mTime: " << p_node_anim->mRotationKeys[rotation_index].mTime << endl;
@@ -429,17 +416,17 @@ aiQuaternion Model::calcInterpolatedRotation(float p_animation_time, const aiNod
 
 aiVector3D Model::calcInterpolatedScaling(float p_animation_time, const aiNodeAnim* p_node_anim)
 {
-	if (p_node_anim->mNumScalingKeys == 1) // Keys это ключевые кадры
+	if (p_node_anim->mNumScalingKeys == 1) // Keys пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 	{
 		return p_node_anim->mScalingKeys[0].mValue;
 	}
 
-	uint scaling_index = findScaling(p_animation_time, p_node_anim); // вернет индекс ключевого кадра который начался
-	uint next_scaling_index = scaling_index + 1; // индекс следующего ключевого кадра
+	uint scaling_index = findScaling(p_animation_time, p_node_anim); // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+	uint next_scaling_index = scaling_index + 1; // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 	assert(next_scaling_index < p_node_anim->mNumScalingKeys);
-	// время между кадрами
+	// пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	float delta_time = (float)(p_node_anim->mScalingKeys[next_scaling_index].mTime - p_node_anim->mScalingKeys[scaling_index].mTime);
-	// фактор = (время которое прошло ОТ НАЧАЛА ТЕКУЩЕГО КЛЮЧЕВОГО КАДРА) / на время между кадрами
+	// пїЅпїЅпїЅпїЅпїЅпїЅ = (пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ) / пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	float  factor = (p_animation_time - (float)p_node_anim->mScalingKeys[scaling_index].mTime) / delta_time;
 	assert(factor >= 0.0f && factor <= 1.0f);
 	aiVector3D start = p_node_anim->mScalingKeys[scaling_index].mValue;
@@ -455,10 +442,10 @@ const aiNodeAnim * Model::findNodeAnim(const aiAnimation * p_animation, const st
 	// numChannels == numBones
 	for (uint i = 0; i < p_animation->mNumChannels; i++)
 	{
-		const aiNodeAnim* node_anim = p_animation->mChannels[i]; // Описывает анимацию одного node
+		const aiNodeAnim* node_anim = p_animation->mChannels[i]; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ node
 		if (string(node_anim->mNodeName.data) == p_node_name)
 		{
-			return node_anim;// если имена совпадают то анимация кости (к которой прикреплена node) представлена этой node_anim
+			return node_anim;// пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ (пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ node) пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ node_anim
 		}
 	}
 
@@ -470,11 +457,11 @@ void Model::readNodeHierarchy(float p_animation_time, const aiNode* p_node, cons
 
 	string node_name(p_node->mName.data);
 
-	//Каждому node, на который воздействует анимация, предоставляется отдельная серия данных(aiNodeAnim).
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ node, пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ(aiNodeAnim).
 	const aiAnimation* animation = scene->mAnimations[0];
 	aiMatrix4x4 node_transform = p_node->mTransformation;
 
-	const aiNodeAnim* node_anim = findNodeAnim(animation, node_name); // найти анимацию для этого узла
+	const aiNodeAnim* node_anim = findNodeAnim(animation, node_name); // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 	
 	if (node_anim)
 	{
@@ -511,7 +498,7 @@ void Model::readNodeHierarchy(float p_animation_time, const aiNode* p_node, cons
 
 	aiMatrix4x4 global_transform = parent_transform * node_transform;
 
-	// Если к node для анимации прикреплена bone, то имя node должно совпадать с именем bone !!!
+	// пїЅпїЅпїЅпїЅ пїЅ node пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ bone, пїЅпїЅ пїЅпїЅ node пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ bone !!!
 	if (m_bone_mapping.find(node_name) != m_bone_mapping.end()) // true if node_name exist in bone_mapping
 	{
 		uint bone_index = m_bone_mapping[node_name];
@@ -530,8 +517,8 @@ void Model::boneTransform(double time_in_sec, vector<aiMatrix4x4>& transforms)
 	aiMatrix4x4 identity_matrix; // = mat4(1.0f);
 
 	double time_in_ticks = time_in_sec * ticks_per_second;
-	float animation_time = fmod(time_in_ticks, scene->mAnimations[0]->mDuration); //деление по модулю (остаток от деления)
-	// animation_time - время которое прошло в этот момент от начала анимации (от первого ключевого кадра в анимации )
+	float animation_time = fmod(time_in_ticks, scene->mAnimations[0]->mDuration); //пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ)
+	// animation_time - пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ )
 
 	readNodeHierarchy(animation_time, scene->mRootNode, identity_matrix);
 	
