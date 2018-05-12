@@ -1,5 +1,4 @@
-
-﻿#include "Model.h"
+#include "Model.h"
 #include "Triangle.h"
 #include "InputHandler.h"
 
