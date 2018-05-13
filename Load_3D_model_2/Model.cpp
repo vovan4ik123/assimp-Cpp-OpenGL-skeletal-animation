@@ -226,7 +226,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 		indices.push_back(face.mIndices[2]);
 	}
 
-	// material
+	//material
 	if (mesh->mMaterialIndex >= 0)
 	{
 		//all pointers created in assimp will be deleted automaticaly when we call import.FreeScene();
