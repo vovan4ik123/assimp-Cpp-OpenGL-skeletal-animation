@@ -127,7 +127,7 @@ void Model::loadModel(const string& path)
 
 	cout << "		name nodes animation : " << endl;
 	for (uint i = 0; i < scene->mAnimations[0]->mNumChannels; i++)
-	{// � ��� ������ ���� ������� � ���� �����
+	{
 		cout<< scene->mAnimations[0]->mChannels[i]->mNodeName.C_Str() << endl;
 	}
 	cout << endl;
