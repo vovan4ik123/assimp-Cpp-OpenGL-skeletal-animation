@@ -21,6 +21,7 @@ Triangle::Triangle()
 Triangle::~Triangle()
 {
 	glDeleteProgram(shaders_animated_model);
+	Mix_FreeMusic(music1);
 }
 
 
@@ -48,7 +49,7 @@ void Triangle::init()
 	text_matrix_2D = glm::ortho(0.0f, (float)Game::Instance()->screen_width, 0.0f, (float)Game::Instance()->screen_height, 1.0f, -1.0f);
 
 	// music
-	music1 = Mix_LoadMUS("music/irene_cara_fame.mp3");
+	music1 = Mix_LoadMUS("music/kraski.mp3");
 	Mix_VolumeMusic(16);
 	Mix_PlayMusic(music1, -1); // -1 = NONSTOP playing  0 = 1 time 1 = 2  2 = 3
 
