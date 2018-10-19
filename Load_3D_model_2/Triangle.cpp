@@ -47,6 +47,12 @@ void Triangle::init()
 	// text 2D
 	text_matrix_2D = glm::ortho(0.0f, (float)Game::Instance()->screen_width, 0.0f, (float)Game::Instance()->screen_height, 1.0f, -1.0f);
 
+	// music
+	music1 = Mix_LoadMUS("music/1.wav");
+	Mix_VolumeMusic(16);
+	Mix_PlayMusic(music1, -1); // -1 = NONSTOP playing  0 = 1 time 1 = 2  2 = 3
+
+	//music2 = Mix_LoadMUS("music/02_modern_talking_you_can_win_if_you_want.mp3");
 }
 
 void Triangle::update()
@@ -84,7 +90,7 @@ void Triangle::update()
 	}
 
 	perspective_view = camera.getViewMatrix();
-	perspective_projection = glm::perspective(glm::radians(camera.fov), (float)Game::Instance()->screen_width / (float)Game::Instance()->screen_height, 1.0f, 2000.0f); // пирамида
+	perspective_projection = glm::perspective(glm::radians(camera.fov), (float)Game::Instance()->screen_width / (float)Game::Instance()->screen_height, 1.0f, 2000.0f); // ГЇГЁГ°Г Г¬ГЁГ¤Г 
 
 	model_man.update();
 	//our_model2.update();
@@ -126,8 +132,8 @@ void Triangle::render()
 	glUniform3f(glGetUniformLocation(shaders_animated_model, "point_light.specular"), 1.0f, 1.0f, 1.0f);
 
 	glUniform1f(glGetUniformLocation(shaders_animated_model, "point_light.constant"), 1.0f);
-	glUniform1f(glGetUniformLocation(shaders_animated_model, "point_light.linear"), 0.007);	//0.14 0.09  0.07  0.045  0.027  0.022  0.014  0.007  0.0014 -	разное расстояние затухания
-	glUniform1f(glGetUniformLocation(shaders_animated_model, "point_light.quadratic"), 0.0002);//0.07 0.032 0.017 0.0075 0.0028 0.0019 0.0007 0.0002 0.000007	расстояние -->
+	glUniform1f(glGetUniformLocation(shaders_animated_model, "point_light.linear"), 0.007);	//0.14 0.09  0.07  0.045  0.027  0.022  0.014  0.007  0.0014 -	Г°Г Г§Г­Г®ГҐ Г°Г Г±Г±ГІГ®ГїГ­ГЁГҐ Г§Г ГІГіГµГ Г­ГЁГї
+	glUniform1f(glGetUniformLocation(shaders_animated_model, "point_light.quadratic"), 0.0002);//0.07 0.032 0.017 0.0075 0.0028 0.0019 0.0007 0.0002 0.000007	Г°Г Г±Г±ГІГ®ГїГ­ГЁГҐ -->
 
 	MVP = perspective_projection * perspective_view * matr_model_1;
 	glUniformMatrix4fv(glGetUniformLocation(shaders_animated_model, "MVP"), 1, GL_FALSE, glm::value_ptr(MVP));
@@ -165,20 +171,13 @@ void Triangle::render()
 	TextRendering::Instance()->draw("Agent_2", glm::vec3(0.1f, 1.0f, 0.0f), text_matrix_3D_model_2);
 
 	glDepthFunc(GL_LESS);
-
-	// music
-	music1 = Mix_LoadMUS("music/modern_talking_jet_airliner.mp3");
-	Mix_VolumeMusic(16);
-	Mix_PlayMusic(music1, 0); // -1 = NONSTOP playing
-
-	music2 = Mix_LoadMUS("music/02_modern_talking_you_can_win_if_you_want.mp3");
-
+	
 }
 
 void Triangle::playSound()
 {
-	if (Mix_PlayingMusic() == 0)
-		Mix_PlayMusic(music2, 1); // play next ( two time <- loop == 1 )
+	if (Mix_PlayingMusic() == 0) //if first song end and play nothing 
+		Mix_PlayMusic(music2, 1); // play two time( loop = 1) )
 
 	model_man.playSound();
 }
@@ -188,13 +187,13 @@ GLuint Triangle::loadImageToTexture(const char* image_path)
 
 	ILuint ImageName; // The image name to return.
 	ilGenImages(1, &ImageName); // Grab a new image name.
-	ilBindImage(ImageName); // загрузит фотку в прикрепленную имаге
+	ilBindImage(ImageName); // Г§Г ГЈГ°ГіГ§ГЁГІ ГґГ®ГІГЄГі Гў ГЇГ°ГЁГЄГ°ГҐГЇГ«ГҐГ­Г­ГіГѕ ГЁГ¬Г ГЈГҐ
 	if (!ilLoadImage((ILstring)image_path)) std::cout << "image NOT load " << std::endl;
 	// we NEED RGB image (for not transparent)
 	//ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE); //Convert image to RGBA with unsigned byte data type
 
 	GLuint textureID;
-	glGenTextures(1, &textureID); // создать текстуру
+	glGenTextures(1, &textureID); // Г±Г®Г§Г¤Г ГІГј ГІГҐГЄГ±ГІГіГ°Гі
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -217,7 +216,7 @@ GLuint Triangle::loadDDS(const char* image_path, int *w, int *h)
 	// method returns complete !! OpenGL texture for drawing on screen
 	unsigned char header[124];
 
-	// пробуем открыть файл
+	// ГЇГ°Г®ГЎГіГҐГ¬ Г®ГІГЄГ°Г»ГІГј ГґГ Г©Г«
 	FILE *fp;
 	fp = fopen(image_path, "rb");
 	if (fp == NULL)
@@ -226,7 +225,7 @@ GLuint Triangle::loadDDS(const char* image_path, int *w, int *h)
 		return 0;
 	}
 
-	// проверим тип файла
+	// ГЇГ°Г®ГўГҐГ°ГЁГ¬ ГІГЁГЇ ГґГ Г©Г«Г 
 	char filecode[4];
 	fread(filecode, 1, 4, fp);
 	if (strncmp(filecode, "DDS ", 4) != 0) {
@@ -235,7 +234,7 @@ GLuint Triangle::loadDDS(const char* image_path, int *w, int *h)
 		return 0;
 	}
 
-	// читаем заголовок
+	// Г·ГЁГІГ ГҐГ¬ Г§Г ГЈГ®Г«Г®ГўГ®ГЄ
 	fread(&header, 124, 1, fp);
 
 	unsigned int height = *(unsigned int*)&(header[8]);
@@ -256,7 +255,7 @@ GLuint Triangle::loadDDS(const char* image_path, int *w, int *h)
 	unsigned int buff_size = mipmap_count > 1 ? linear_size * 2 : linear_size;
 	buffer = (unsigned char*)malloc(buff_size * sizeof(unsigned char));
 	fread(buffer, 1, buff_size, fp);
-	// закрываем файл
+	// Г§Г ГЄГ°Г»ГўГ ГҐГ¬ ГґГ Г©Г«
 	fclose(fp);
 
 #define FOURCC_DXT1 0x31545844 // "DXT1" in ASCII
